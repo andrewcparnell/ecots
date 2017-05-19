@@ -33,7 +33,11 @@ install.packages(c('R2jags',
 
 ### Step 3
 
-Check that everything works by going to a command line terminal and typing `jags`. If it opens successfully type `exit`. 
+Install `rstan` by going to this [link](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) and following the instructions for your operating system.
+
+### Step 4
+
+Check that JAGS works by going to a command line terminal and typing `jags`. If it opens successfully type `exit`. 
 
 Now go into R and copy and paste the following text:
 ```{r,eval=FALSE}
@@ -54,5 +58,5 @@ This should produce a plot.
 
 ### Troubleshooting
 
-If you run into any problems please drop us a line at <andrew.parnell@ucd.ie> or <dougmcneall@gmail.com>.
+If you run into any problems please drop us a line at <andrew.parnell@ucd.ie>.
 
