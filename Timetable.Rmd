@@ -5,6 +5,7 @@ date: "June 2017"
 output:
   pdf_document: default
   html_document: default
+urlcolor: blue
 ---
 
 Module pre-requisites can be found [here](https://rawgit.com/andrewcparnell/ecots/master/Prerequisites.html). All the raw files and code can be found [here](https://github.com/andrewcparnell/ecots). Click 'Download ZIP' near the top right if you want an offline version of the material
