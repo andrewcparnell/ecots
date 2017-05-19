@@ -4,6 +4,7 @@ author: "Andrew Parnell"
 output:
   pdf_document: default
   html_document: default
+urlcolor: blue
 ---
 
 In preparation for the course please install the following, preferably in the below suggested order.
