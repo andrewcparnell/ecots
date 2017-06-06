@@ -3,8 +3,8 @@ title: 'Time series models for ecologists: course timetable'
 author: "Andrew Parnell"
 date: "June 2017"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 urlcolor: blue
 ---
 
@@ -14,66 +14,66 @@ Module pre-requisites can be found [here](https://rawgit.com/andrewcparnell/ecot
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:00 | Introduction, example data sets [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_1/class_1_intro.html)
-10:00-10:30 | Coffee break
-10:30-11:30 | Revision: likelihood and inference [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_1/class_2_inference.html)
-11:30-11:45 | Break 
-11:45-12:45 | Revision: linear regression and GLMs [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_1/class_3_glms.html)
-12:45-14:00 | Lunch
-14:00-15:00 | Tutor-guided practical: Loading data in R and running simple analysis [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_1/prac_1_R.html)
-15:00-15:30 | Coffee break
-15:30-17:00 | Self-guided practical: Analysing some example data sets [Practical 2](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_1/prac_2_example_data.html)
+8:00-9:00 | Introduction, example data sets [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_1/class_1_intro.html)
+9:00-9:15 | Coffee break
+9:15-10:15 | Revision: likelihood and inference [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_1/class_2_inference.html)
+10:15-10:30 | Break 
+10:30-11:30 | Revision: linear regression and GLMs [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_1/class_3_glms.html)
+11:30-12:45 | Lunch
+12:45-14:00 | Tutor-guided practical: Loading data in R and running simple analysis [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_1/prac_1_R.html)
+14:00-14:30 | Coffee break
+14:30-16:00 | Self-guided practical: Analysing some example data sets [Practical 2](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_1/prac_2_example_data.html)
 
 ## Tuesday 27th June
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:00 | Auto-regressive models and random walks [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_2/class_1_AR.html)
-10:00-10:30 | Coffee break
-10:30-11:30 | Moving averages and ARMA [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_2/class_2_ARMA.html)
-11:30-11:45 | Break 
-11:45-12:45 | Integrated models and ARIMA [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_2/class_3_ARIMA.html)
-12:45-14:00 | Lunch
-14:00-15:00 | Tutor-guided practical: the forecast package in R [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_2/prac_1_forecast.html)
-15:00-15:30 | Coffee break
-15:30-17:00 | Self-guided practical: Fitting ARIMA models with forecast [Practical 2](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_2/prac_2_ARIMA.html)
+8:00-9:00 | Auto-regressive models and random walks [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_2/class_1_AR.html)
+9:00-9:15 | Coffee break
+9:15-10:15 | Moving averages and ARMA [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_2/class_2_ARMA.html)
+10:15-10:30 | Break 
+10:30-11:30 | Integrated models and ARIMA [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_2/class_3_ARIMA.html)
+11:30-12:45 | Lunch
+12:45-14:00 | Tutor-guided practical: the forecast package in R [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_2/prac_1_forecast.html)
+14:00-14:30 | Coffee break
+14:30-16:00 | Self-guided practical: Fitting ARIMA models with forecast [Practical 2](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_2/prac_2_ARIMA.html)
 
 ## Wednesday 28th June
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:00 | Including covariates: ARIMAX models [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_3/class_1_ARIMAX.html)
-10:00-10:30 | Coffee break
-10:30-11:30 | Model choice and forecasting [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_3/class_2_model_choice.html)
-11:30-11:45 | Break 
-11:45-12:45 | Creating bespoke time series models using Bayes [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_3/class_3_Bayes.html)
-12:45-14:00 | Lunch
-14:00-15:00 | Tutor-guided practical: a walkthrough example time series analysis [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_3/prac_1_walkthrough.html)
-15:00-15:30 | Coffee break
-15:30-17:00 | Self-guided practical: finding the best time series model for your data set [Practical 2](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_3/prac_2_best_model.html)
+8:00-9:00 | Including covariates: ARIMAX models [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_3/class_1_ARIMAX.html)
+9:00-9:15 | Coffee break
+9:15-10:15 | Model choice and forecasting [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_3/class_2_model_choice.html)
+10:15-10:30 | Break 
+10:30-11:30 | Creating bespoke time series models using Bayes [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_3/class_3_Bayes.html)
+11:30-12:45 | Lunch
+12:45-14:00 | Tutor-guided practical: a walkthrough example time series analysis [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_3/prac_1_walkthrough.html)
+14:00-14:30 | Coffee break
+14:30-16:00 | Self-guided practical: finding the best time series model for your data set [Practical 2](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_3/prac_2_best_model.html)
 
 ## Thursday 29th June
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:00 | Modelling with seasonality and the frequency domain [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_4/class_1_seasonality.html)
-10:00-10:30 | Coffee break
-10:30-11:30 | Stochastic volatility models and heteroskedasticity [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_4/class_2_svm.html)
-11:30-11:45 | Break 
-11:45-12:45 | Fitting Bayesian time series models [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_4/class_3_Bayes_fit.html)
-12:45-14:00 | Lunch
-14:00-15:00 | Tutor-guided practical: fitting time series models in JAGS and Stan [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_4/prac_1_JAGS.html)
-15:00-15:30 | Coffee break
-15:30-17:00 | Self-guided practical: start analysing your own data set 
+8:00-9:00 | Modelling with seasonality and the frequency domain [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_4/class_1_seasonality.html)
+9:00-9:15 | Coffee break
+9:15-10:15 | Stochastic volatility models and heteroskedasticity [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_4/class_2_svm.html)
+10:15-10:30 | Break 
+10:30-11:30 | Fitting Bayesian time series models [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_4/class_3_Bayes_fit.html)
+11:30-12:45 | Lunch
+12:45-14:00 | Tutor-guided practical: fitting time series models in JAGS and Stan [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_4/prac_1_JAGS.html)
+14:00-14:30 | Coffee break
+14:30-16:00 | Self-guided practical: start analysing your own data set 
 
 ## Friday 30th June
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:00 | Models for continuous time series: Brownian Motion and Ornstien Uhlenbeck processes [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_1_seasonality.html)
-10:00-10:30 | Coffee break
-10:30-11:30 | State-space and change point models [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_2_change_point.html)
-11:30-11:45 | Break 
-11:45-12:45 | Multivariate time series models and co-integration [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_3_multivariate.html)
-12:45-14:00 | Lunch
-14:00-17:00 | Open session: analyse your own data set 
+8:00-9:00 | Models for continuous time series: Brownian Motion and Ornstien Uhlenbeck processes [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_1_seasonality.html)
+9:00-9:15 | Coffee break
+9:15-10:15 | State-space and change point models [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_2_change_point.html)
+10:15-10:30 | Break 
+10:30-11:30 | Multivariate time series models and co-integration [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_3_multivariate.html)
+11:30-12:45 | Lunch
+12:45-16:00 | Open session: analyse your own data set 
