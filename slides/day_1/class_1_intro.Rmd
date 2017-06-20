@@ -146,7 +146,7 @@ with(geese, plot(date, d13CPl,
 o = order(geese$julianday)
 with(geese, plot(julianday[o], d13CPl[o],
                                   ylab = 'd13C',
-                 xlab = 'Year'))
+                 xlab = 'Day of year'))
 ```
 
 ## Goals of time series analysis

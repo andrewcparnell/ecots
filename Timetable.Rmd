@@ -74,6 +74,6 @@ Time  | Class
 9:00-9:15 | Coffee break
 9:15-10:15 | State-space and change point models [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_2_change_point.pdf)
 10:15-10:30 | Break 
-10:30-11:30 | Multivariate time series models and co-integration [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_3_multivariate.pdf)
+10:30-11:30 | Multivariate time series models, Gaussian processes, and co-integration [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_3_multivariate.pdf)
 11:30-12:45 | Lunch
 12:45-16:00 | Open session: analyse your own data set 

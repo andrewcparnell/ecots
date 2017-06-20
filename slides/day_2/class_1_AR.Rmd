@@ -283,9 +283,6 @@ $$\hat{y}_{t+2} = \hat{\alpha} + \hat{\beta} \hat{y}_{t+1}$$
 Arima(y, order = c(1, 0, 0))
 ```
 
-
-
-
 ## Summary
 
 - The ACF and PACF are two really useful tools to run on every time series (as well as a plot of the time series itself)
