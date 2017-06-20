@@ -11,7 +11,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-setwd("~/GitHub/ecots/slides/day_3")
+#setwd("~/GitHub/ecots/slides/day_3")
 options(width = 50)
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
 lapply(pkgs, library, character.only = TRUE)
@@ -136,7 +136,7 @@ where $n$ is the number of data points (after differencing)
 
 ```{r, fig.height = 5}
 plot(wheat$wheat, type = 'l')
-lines(my_model_ARIMAX111$fitted, col = 'red')
+lines(fitted(my_model_ARIMAX111), col = 'red')
 ```
 
 ## Accuracy measures from `forecast`

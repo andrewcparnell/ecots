@@ -1,6 +1,6 @@
 ---
 title: 'Time series models for ecologists: course timetable'
-author: "Andrew Parnell"
+author: "Andrew Parnell, John O'Sullivan and Emma Howard"
 date: "June 2017"
 output:
   html_document: default
@@ -20,7 +20,7 @@ Time  | Class
 10:15-10:30 | Break 
 10:30-11:30 | Revision: linear regression and GLMs [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_1/class_3_glms.pdf)
 11:30-12:45 | Lunch
-12:45-14:00 | Tutor-guided practical: Loading data in R and running simple analysis [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_1/prac_1_R.pdf)
+12:45-14:00 | Tutor-guided practical (John): Loading data in R and running simple analysis [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_1/prac_1_R.pdf)
 14:00-14:30 | Coffee break
 14:30-16:00 | Self-guided practical: Analysing some example data sets [Practical 2](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_1/prac_2_example_data.pdf)
 
@@ -34,7 +34,7 @@ Time  | Class
 10:15-10:30 | Break 
 10:30-11:30 | Integrated models and ARIMA [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_2/class_3_ARIMA.pdf)
 11:30-12:45 | Lunch
-12:45-14:00 | Tutor-guided practical: the forecast package in R [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_2/prac_1_forecast.pdf)
+12:45-14:00 | Tutor-guided practical (Emma): the forecast package in R [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_2/prac_1_forecast.pdf)
 14:00-14:30 | Coffee break
 14:30-16:00 | Self-guided practical: Fitting ARIMA models with forecast [Practical 2](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_2/prac_2_ARIMA.pdf)
 
@@ -48,7 +48,7 @@ Time  | Class
 10:15-10:30 | Break 
 10:30-11:30 | Model choice and forecasting using Bayes [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_3/class_3_model_choice.pdf)
 11:30-12:45 | Lunch
-12:45-14:00 | Tutor-guided practical: a walkthrough example time series analysis [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_3/prac_1_walkthrough.pdf)
+12:45-14:00 | Tutor-guided practical (Emma): a walkthrough example time series analysis [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_3/prac_1_walkthrough.pdf)
 14:00-14:30 | Coffee break
 14:30-16:00 | Self-guided practical: finding the best time series model for your data set [Practical 2](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_3/prac_2_best_model.pdf)
 
@@ -62,7 +62,7 @@ Time  | Class
 10:15-10:30 | Break 
 10:30-11:30 | Fitting Bayesian time series models [Class 3](https://rawgit.com/andrewcparnell/ecots/master/slides/day_4/class_3_Bayes_fit.pdf)
 11:30-12:45 | Lunch
-12:45-14:00 | Tutor-guided practical: fitting time series models in JAGS and Stan [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_4/prac_1_JAGS.pdf)
+12:45-14:00 | Tutor-guided practical (John): fitting time series models in JAGS and Stan [Practical 1](https://rawgit.com/andrewcparnell/ecots/master/practicals/day_4/prac_1_JAGS.pdf)
 14:00-14:30 | Coffee break
 14:30-16:00 | Self-guided practical: start analysing your own data set 
 

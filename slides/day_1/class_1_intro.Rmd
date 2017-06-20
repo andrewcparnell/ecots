@@ -11,7 +11,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-setwd("~/GitHub/ecots/slides/day_1")
+#setwd("~/GitHub/ecots/slides/day_1")
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
 lapply(pkgs, library, character.only = TRUE)
 ```
@@ -121,8 +121,16 @@ with(lynx, plot(year, number, type = 'l',
                 xlab = 'Year'))
 ```
 
+## Data set 4: Forest fires in Canada
 
-## Data set 4: Geese isotopes 
+```{r, echo = FALSE}
+ff = read.csv('../../data/forest_fires.csv')
+with(ff, plot(year, acres, type = 'l',
+                ylab = 'Number of acres',
+                xlab = 'Year'))
+```
+
+## Data set 5: Geese isotopes 
 
 ```{r, echo = FALSE}
 geese = read.csv('../../data/geese_isotopes.csv')
@@ -132,7 +140,7 @@ with(geese, plot(date, d13CPl,
                  xlab = 'Year'))
 ```
 
-## Data set 4: Geese isotopes again 
+## Data set 5: Geese isotopes again 
 
 ```{r, echo = FALSE}
 o = order(geese$julianday)

@@ -1,5 +1,5 @@
 ---
-title: 'Class 2: Integrated models and ARIMA'
+title: 'Class 3: Integrated models and ARIMA'
 author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
   \newline \includegraphics[width=1cm]{../UCDlogo.pdf}
 output:
@@ -11,7 +11,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-setwd("~/GitHub/ecots/slides/day_2")
+#setwd("~/GitHub/ecots/slides/day_2")
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
 lapply(pkgs, library, character.only = TRUE)
 ```
