@@ -149,6 +149,16 @@ with(geese, plot(julianday[o], d13CPl[o],
                  xlab = 'Day of year'))
 ```
 
+## Data set 6: Oxygen isotopes in ice
+
+```{r, echo = FALSE, fig.height = 5}
+ice = read.csv('../../data/GISP2_20yr.csv')
+with(ice, plot(Age, Del.18O, type = 'l', ylab = 'd18O'))
+```
+```{r}
+table(diff(ice$Age))
+```
+
 ## Goals of time series analysis
 
 - Predict future values of the response variable

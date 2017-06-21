@@ -70,7 +70,7 @@ Time  | Class
 
 Time  | Class
 ------------- | ----------------------------------------------------
-8:00-9:00 | Models for continuous time series: Brownian Motion and Ornstien Uhlenbeck processes [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_1_seasonality.pdf)
+8:00-9:00 | Models for continuous time series: Brownian Motion and Ornstien Uhlenbeck processes [Class 1](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_1_BM.pdf)
 9:00-9:15 | Coffee break
 9:15-10:15 | State-space and change point models [Class 2](https://rawgit.com/andrewcparnell/ecots/master/slides/day_5/class_2_change_point.pdf)
 10:15-10:30 | Break 
