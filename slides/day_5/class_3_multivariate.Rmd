@@ -11,7 +11,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-setwd("~/GitHub/ecots/slides/day_5")
+#setwd("~/GitHub/ecots/slides/day_5")
 #setwd('/Volumes/MacintoshHD2/GitHub/ecots/slides/day_5/')
 options(width = 50)
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
@@ -32,7 +32,9 @@ options(mc.cores = parallel::detectCores())
 - For example, we might have multiple different climate variables observed, or multiple chemical signatures. If they are correlated then by fitting them separately we will lose precision
 - If the observations are observed at different times for each time series we can use the NA trick, or create a latent state space model on which all measurements are regular
 
-## The Vector AR model {.smaller}
+## The Vector AR model
+
+\small
 
 - We can extend most of the models we have met to multivariate scenarios by applying the multivariate normal distribution instead of the univariate version
 - Suppose now that $y_t$ is a vector of length $k$ containing all the observations at time $t$
@@ -44,7 +46,9 @@ $$y_t \sim MVN(A + \Phi y_{t-1}, \Sigma)$$
 - Here the parameter vector $A$ controls the overall mean level for each of the $k$ series, $\Phi$ is a $k \times k$ matrix which controls the influence on the current value of the previous time points of _both_ series
 - $\Sigma$ here is a $k \times k$ matrix that controls the variance of the process and the residual correlation between the two series (NB: this is different from the GP formulation we met yesterday)
 
-## JAGS code for the VAR model {.smaller}
+## JAGS code for the VAR model
+
+\small
 
 ```{r}
 model_code = '
@@ -108,11 +112,7 @@ model_parameters =  c("y")
 
 real_data_run_future = jags(data = real_data_future,
                      parameters.to.save = model_parameters,
-                     model.file=textConnection(model_code),
-                     n.chains=4,
-                     n.iter=10000,
-                     n.burnin=2000,
-                     n.thin=8)
+                     model.file=textConnection(model_code))
 
 y_future_pred = real_data_run_future$BUGSoutput$sims.list$y
 y_future_med = apply(y_future_pred,c(2,3),'median')
@@ -121,9 +121,9 @@ year_all = c(bivariate_data$Year[-1],2010:(2010+n_forecast))
 ```{r, echo=FALSE}
 # Create plots
 par(mfrow=c(2,1))
-plot(year_all[-1]-1, bivariate_data$Anomaly[1]+cumsum(y_future_med[,1]), col='red', type='l')
+plot(year_all[-1]-1, bivariate_data$Anomaly[1]+cumsum(y_future_med[,1]), col='red', type='l', ylab = 'temperature prediction')
 with(bivariate_data, lines(Year, Anomaly))
-plot(year_all[-1]-1, bivariate_data$sea_level_m[1]+cumsum(y_future_med[,2]), col='red', type='l')
+plot(year_all[-1]-1, bivariate_data$sea_level_m[1]+cumsum(y_future_med[,2]), col='red', type='l', ylab = 'sea level prediction')
 with(bivariate_data, lines(Year, sea_level_m))
 ```
 
@@ -191,7 +191,7 @@ for(i in 2:ncol(B)) lines(x,B[,i], col = i)
 
 - Now, instead of using a matrix $X$ with polynomial basis functions, we create a matrix $B$ of B-spline basis functions
 - Each basis function gets its own weight $\beta_j$ which determines the height of the curve
-- A common way to make the curve smooth is make the $\beta_j$ values similar to each other via a hierarchical model. Often:
+- A common way to make the curve smooth is make the $\beta_j$ values similar to each other via a random walk. Often:
 $$\beta_j \sim N(\beta_{j-1}, \sigma_b^2)$$
 - This is known as a _penalised spline_ or P-spline model since you are penalising the spline basis weights by making them similar to each other
 
@@ -299,7 +299,7 @@ transformed parameters {
 '
 ```
 
-```{r, eval = FALSE, include = FALSE}
+```{r, include = FALSE}
 stan_code = '
 data {
   int<lower=1> N1;
@@ -328,7 +328,8 @@ transformed parameters {
   vector[N1+N2] mu;
   rho_sq = inv(inv_rho_sq);
   for (i in 1:N) mu[i] = alpha + beta * x[i];
-} model {
+} 
+model {
   matrix[N,N] Sigma;
   vector[N] y;
 
@@ -362,7 +363,7 @@ stan_run = stan(data = list(N1 = nrow(sheep),
 
 ## Stan output
 
-```{r, message=FALSE, eval = FALSE}
+```{r, message=FALSE, echo = FALSE}
 pred_ci = apply(extract(stan_run, pars = 'y2')$y2, 
              2, 'quantile', c(0.25,0.5,0.75))
 plot(sheep$year, sheep$sheep, xlim = c(min(sheep$year),
@@ -394,7 +395,7 @@ lines(x2, pred_ci[3,], col = 'red')
 $$ y_t = F_t x_t + \epsilon_t,\; \epsilon_t \sim MVN(0, \Sigma_t)$$
 $$ x_t = G_t x_{t-1} + \gamma_t,\; \gamma_t \sim N(0, \Psi_t)$$
 - The key difference here is that the transformation matrices $F_t$ and $G_t$ can change over time, as can the variance matrices $\Sigma_t$ and $\Psi_t$, possibly in an ARCH/GARCH type framework
-- These are very hard models to fit in jags but simple versions can work
+- These are very hard models to fit in JAGS/Stan but simple versions can work
 
 ## Latent factor time series models
 
@@ -410,4 +411,4 @@ where now $B$ is a $num series \times num factors$  factor loading matrix which 
 - We have seen how to fit basic Bayesian state space models and observed some of their pitfalls
 - We know how to create some simple multivariate time series models
 - We have seen some of the more advanced ideas in time series models such as DLMs and dynamic factor models
-- You are now an expert in Bayesian time series!
+- You are now an expert in time series!

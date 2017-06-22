@@ -11,8 +11,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-setwd("~/GitHub/ecots/slides/day_5")
-#setwd('/Volumes/MacintoshHD2/GitHub/ecots/slides/day_5/')
+#setwd("~/GitHub/ecots/slides/day_5")
+setwd('/Volumes/MacintoshHD2/GitHub/ecots/slides/day_5/')
 options(width = 50)
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
 lapply(pkgs, library, character.only = TRUE)
@@ -148,7 +148,8 @@ real_data_run_2 = jags(data = real_data_2,
 pick_out = which( is.na(real_data_2$y) )
 pred_y = apply(real_data_run_2$BUGSoutput$sims.list$y[, pick_out], 2, 'mean')
 plot(t_ideal, pred_y, type = 'l', 
-     ylab = 'd18O', xlab = 'Age')
+     ylab = 'd18O', xlab = 'Age', xlim = c(6e04, 8e04))
+points(ice$Age, ice$Del.18O, col = 'red', pch = 19)
 ```
 
 ## The Ornstein Uhlenbeck process
