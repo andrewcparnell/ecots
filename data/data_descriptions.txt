@@ -12,3 +12,7 @@ geese_isotopes.csv contains a bivariate time series in irregular time of geese s
 male)
 
 forest_fires.csv contains the number of acres burned in forest fires in Canada from 1918-1988. Comes from Hipel and McLeod (1994) via the Time Series Data Library. (Hyn­d­man, R.J. “Time Series Data Library”, http://data.is/TSDLdemo)
+
+nile_flow.csv contains the mean annual Nile flow, 1871 – 1970. Comes from Hipel and McLeod (1994) via the Time Series Data Library. (Hyn­d­man, R.J. “Time Series Data Library”, http://data.is/TSDLdemo)
+
+horseshoe.csv contains data from a study (Brockman, Ethology, 1996) on nesting horseshoe crabs. The response variable is satell: the number of satellites (other males residing nearby). The covariates are the female crabs colour (color; 1 = light medium, 2 = medium, 3 = dark medium, 4 = dark), spine condition (1 = both good, 2 = one worn or broken, 3 = both worn or broken), widch (cm), and weight (kg) 
