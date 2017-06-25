@@ -1,6 +1,6 @@
 ############################################################################################################
 # Section 0:
-# First a reminder about RStudio, and getting help with ? and ??, = vs <-, and comments
+# First a reminder about RStudio, and getting help with ? and ??, = vs <-, and comments, and setting the working directory
 ############################################################################################################
 
 ############################################################################################################
@@ -488,19 +488,3 @@ cat(result)
 plot(prostate$age, prostate$lcavol, type = 'l') # Messy
 ord = order(prostate$age)
 plot(prostate$age[ord], prostate$lcavol[ord], type = 'l')
-
-############################################################################################################
-# Section 9:
-# EXERCISE ----------------------------------------------------------------
-############################################################################################################
-
-# 1) Create a cool plot of the prostate data exploring the use of colours, labels.
-#     See if you can find something interesting about it that otherwise might not be obvious.
-#     Try to use some commands that haven't been used elsewhere, e.g. polygon, image, etc.
-
-############################################################################################################
-# End ---------------------------------------------------------------------
-############################################################################################################
-
-
-
