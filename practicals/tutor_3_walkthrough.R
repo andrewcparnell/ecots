@@ -1,3 +1,9 @@
+install.packages(c('R2jags', 
+                   'rjags', 
+                   'lubridate', 
+                   'tidyverse', 
+                   'forecast'))
+
 ## Tutorial lab 3 - Walkthrough examples of time series analysis
 
 #class_3_ARMA
@@ -12,11 +18,6 @@
 #and checking the AIC (or others)
 #6. Check the residuals
 #7. Forecast into the future
-
-require(lmtest)
-require(forecast)
-require(tseries)
-require(ggplot2)
 
 # ----- First section: Time Series 1: Basic Example: 
 #------HadCRUT is the dataset of monthly instrumental temperature records
@@ -34,12 +35,10 @@ detrended_series = hadcrut$Anomaly - trendseries$fitted.values
 tsdisplay(detrended_series) # Not trend-stationary
 
 # Try difference-stationary
-adf.test(hadcrut$Anomaly) # Test for root (Agumented Dickey-Fuller Test)
+
 ndiffs(hadcrut$Anomaly)
 Anomaly_diff<-diff(hadcrut$Anomaly)
-
 tsdisplay(Anomaly_diff)
-adf.test(Anomaly_diff)
 
 #3. Guess at a suitable p and q for an ARMA(p, q) model
 tsdisplay(Anomaly_diff) # AR models look similar to ARMA 
@@ -48,23 +47,22 @@ tsdisplay(Anomaly_diff) # AR models look similar to ARMA
 #4. Fit the model
 model1 <- Arima(hadcrut$Anomaly, order = c(2,1,0))  
 model1 #AIC = -263.18
-coeftest(model1) # Check whether terms are relevant
+
+# require(lmtest) # Not a prerequisite but an extra two lines
+# coeftest(model1) # Check whether terms are relevant
 
 #Q5 Overfitting a model
 # Overfit in AR direction (Add extra AR terms)
 model2 =  Arima(hadcrut$Anomaly, order=c(3,1,0))
 model2  # AIC = -272.14 
-coeftest(model2) # Keep term
 
 # Overfit in AR direction (Add extra AR terms)
 model3 =  Arima(hadcrut$Anomaly, order = c(4,1,0))
 model3  # AIC = -270.28 
-coeftest(model3) # Reject term
 
 # Overfit in MA direction
 model4 =  Arima(hadcrut$Anomaly, order = c(3,1,1))
 model4 # AIC = -271.09
-coeftest(model4) # Reject term
 
 # Comparing our model to an ARIMAX model
 auto.arima(hadcrut$Anomaly, xreg=hadcrut$Year)  #AIC = -272.03 
@@ -111,7 +109,7 @@ with(lynx, plot(year , number, type ='l'))
 tsdisplay(lynx$number) # from class_1_AR recognise repeating pattern in ACF
 # have issue with increasing mean - investigate non-stationarity
 
-adf.test(lynx$number)
+# adf.test(lynx$number) (From the tseries package)
 auto.arima(lynx$number) # see if our answer matches the packages suggestion
 
 # Log transformation makes the peaks and troughs appear in the same pattern
@@ -121,29 +119,25 @@ lambda <- BoxCox.lambda(lynx$number)
 
 # Ar fits am AR series based on AIC
 lynx.fit <- ar(BoxCox(lynx$number, lambda))
-plot(forecast(lynx.fit, h = 20,lambda = lambda))
+plot(forecast(lynx.fit, h = 20, lambda = lambda))
 
 # Cross Fold Valifdation and forecast from neural network models
 modelcv <- CVar(lynx$number, k = 5, lambda = 0.15)  # Currently applies a neural network model
 print(modelcv)
 print(modelcv$fold1)
-plot(forecast(modelcv, h = 14))
-lines(lynx)
 
 # model used in literature
 fit1<- Arima(lynx_log, order = c(11,0,0))  #White Tong (1977)
-fit2  #AIC=166.13
+fit1  #AIC=166.13
 
 fit2<- Arima(lynx_log,order=c(2,0,1))
 fit2 # AIC = 184.55 
 
 # Forecasting transformed data
 plot(forecast(fit1, h = 15)) # Uh-oh
-
-# CV - come back to
-far2 <- function(lynx_log, h = 5){forecast(Arima(lynx_log, order = c(11,0,0)), h = 5)}
-e <- tsCV(lynx_log, far2, h=1)
-
+plot(forecast(fit1, h = 15, lambda = lambda))
+fit1<- Arima(lynx$number, order = c(11,0,0),lambda=0)
+plot(forecast(fit1, h = 15, lambda = lambda))
 
 # ------ Third Section: Seasonality example and comparing models using accuracy functions 
 data("nottem")
@@ -191,7 +185,7 @@ tsdiag(fit4) # Check residuals
 forecast_a <- forecast(fit4, h = 36)
 forecast_m <- meanf(nott, h = 36)
 forecast_rw <- rwf(nott, h = 36) 
-forecast_s <- snaive(nott, h = 36) # Y[t]=Y[t-m] + Z(t) Z~Normal iid
+forecast_srw <- snaive(nott, h = 36) # Y[t]=Y[t-m] + Z(t) Z~Normal iid
 plot(forecast_a)
 accuracy(fit3)
 
@@ -207,6 +201,13 @@ fit6 <- ets(nott, allow.multiplicative.trend = TRUE) #ETS - (error type, trend t
 summary(fit6)
 forecast_ets <- forecast(fit6, h = 36)
 
+# Could have dealt with seasonality by setting it as a covariate.....
+nott_ts <- ts(nott, frequency = 12,
+            start = c(1920, 1))
+fit_cov <- tslm(nott_ts ~ trend + season)
+plot(forecast(fit_cov, h = 36))
+forecast_cov <- forecast(fit_cov, h = 36)
+
 #fit5 <- baggedETS(nott) # takes long time to run...
 
 fit6<-nnetar(nott, repeats = 20, maxit = 200)
@@ -215,14 +216,17 @@ forecast_nn<-forecast(fit6, h = 36)
 accuracy(forecast_a, nott_for)
 accuracy(forecast_ets, nott_for)
 accuracy(forecast_nn, nott_for) # Which is best? 
+accuracy(forecast_cov, nott_for)
+
 
 plot(forecast_ets)
+
+# Beware of artificial seasonality owing to months having different lengths
 
 # --------------- Fourth section: Quick Jags example 
 # --------------- Further detail on Jags tomorrow
 
 
-require(R2jags) 
 
 # Maths -------------------------------------------------------------------
 
@@ -236,7 +240,7 @@ require(R2jags)
 
 # Likelihood
 # For AR(1)
-# y[t] ~ normal(alpha + phi * y[t-1], sigma^2)
+# y[t] ~ normal(alpha + phi * y[t-1], sigma^2) # See AR/ARMA/MA etc. course notes
 # For AR(p)
 # y[t] ~ normal(alpha + phi[1] * y[t-1] + ... + phi[p] * y[y-p], sigma^2)
 
@@ -246,6 +250,13 @@ require(R2jags)
 # phi ~ dnorm(0,100) # If you're not fussed about stability
 # sigma ~ dunif(0,100)
 
+# 1. Write some Stan or JAGS code which contains the likelihood and get the prior(s)
+# 2. Get your data into a list so that it matches the data names used in the Stan/JAGS code
+# 3. Run your model through Stan/JAGS
+# 4. Get the posterior output
+# 5. Check convergence of the posterior probability distribution
+# 6. Create the output that you want (forecasts, etc)
+
 # Simulate data -----------------------------------------------------------
 
 # Some R code to simulate data from the above model
@@ -254,26 +265,17 @@ set.seed(123)
 T = 100
 t_seq = 1:T
 sigma = 1
-alpha = 1
-phi = 0.6
+alpha = 1    
+phi = 0.6    # Constrain phi to (-1,1) so the series doesn't explode
 y = rep(NA,T)
 y[1] = rnorm(1,0,sigma)
-for(t in 2:T) y[t] = rnorm(1,alpha + phi * y[t-1], sigma)
+for(t in 2:T) y[t] = rnorm(1, alpha + phi * y[t-1], sigma)
 # plot
 plot(t_seq,y,type='l')
-
-# Also simulate an AR(p) process
-p = 3
-phi2 = c(0.5,0.1,-0.02)
-y2 = rep(NA,T)
-y2[1:p] = rnorm(p,0,sigma)
-for(t in (p+1):T) y2[t] = rnorm(1,alpha + sum( phi2 * y2[(t-1):(t-p)] ), sigma)
-plot(t_seq,y2,type='l')
 
 # Jags code ---------------------------------------------------------------
 
 # Jags code to fit the model to the simulated data
-# This code is for a general AR(p) model
 
 model_code = '
 model
@@ -281,6 +283,7 @@ model
   # Likelihood
   for (t in (p+1):T) {
   y[t] ~ dnorm(mu[t], tau)
+  y_pred[t] ~ dnorm(mu[t], sigma^-2)
   mu[t] <- alpha + inprod(phi, y[(t-p):(t-1)])
   }
   # Priors
@@ -308,27 +311,15 @@ model_run = jags(data = model_data,
                  n.burnin=200, # Number of iterations to remove at start
                  n.thin=2) # Amount of thinning
 
-# Try the AR(p) version
-model_data_2 = list(T = T, y = y2, p = p)
-
-model_run_2 = jags(data = model_data_2,
-                   parameters.to.save = model_parameters,
-                   model.file=textConnection(model_code),
-                   n.chains=4, # Number of different starting positions
-                   n.iter=1000, # Number of iterations
-                   n.burnin=200, # Number of iterations to remove at start
-                   n.thin=2) # Amount of thinning
-
-
-# Simulated results -------------------------------------------------------
-
 # Check the output - are the true values inside the 95% CI?
 # Also look at the R-hat values - they need to be close to 1 if convergence has been achieved
 print(model_run)
-print(model_run_2) # Note: phi is correct but in the wrong order
 
+post = model_run$BUGSoutput$sims.matrix
+head(post)
+plot(post[,'alpha'], type="l")
 
-# Moving Average example 
+#---------------------- Moving Average example 
 
 # Description of the Bayesian model fitted in this file
 # Notation:
@@ -395,10 +386,10 @@ model_parameters =  c("alpha","theta","sigma")
 # Run the model
 model_run = jags(data = model_data,
                  parameters.to.save = model_parameters,
-                 model.file=textConnection(model_code),
-                 n.chains=4, # Number of different starting positions
-                 n.iter=1000, # Number of iterations
-                 n.burnin=200, # Number of iterations to remove at start
-                 n.thin=2) # Amount of thinning
+                 model.file = textConnection(model_code),
+                 n.chains = 4, # Number of different starting positions
+                 n.iter = 1000, # Number of iterations
+                 n.burnin = 200, # Number of iterations to remove at start
+                 n.thin = 2) # Amount of thinning
 
 print(model_run) # Parameter theta should match the true value
