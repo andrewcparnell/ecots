@@ -224,11 +224,11 @@ where $N_1$ is the number of prey, $N_2$ is the number of predators, and $a, b, 
 - Another way of extending these models is to give the standard deviation of the Brownian Motion its own stochastic process, just like the SVMs we met yesterday
 
 - For example:
-
 $$dy = \alpha dt + \sigma(dt) dW(t)$$
+
 - You need to be careful about the choice of stochastic process on $\sigma$
 
-- One good choice is the Inverse Gaussian Process which produces an amazingly flexible array of distributional shapes it can accomplish
+- One good choice is the Inverse Gaussian Process which produces an amazingly flexible array of distributional shapes
 
 ## Summary
 

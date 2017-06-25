@@ -15,6 +15,8 @@ setwd("~/GitHub/ecots/slides/day_3")
 options(width = 50)
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
 lapply(pkgs, library, character.only = TRUE)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
 ```
 
 ## Learning outcomes
@@ -85,13 +87,13 @@ model
   ...
   # Likelihood
   for (t in (q+1):N) {
-    y[t] ~ dnorm(alpha + ar_mean[t] + ma_mean[t] + reg_mean[t], sigma^-2)
+    y[t] ~ dnorm(alpha + ar_mean[t] + ma_mean[t] + reg_mean[t],
+                  sigma^-2)
     ma_mean[t] <- inprod(theta, eps[(t-q):(t-1)])
     ar_mean[t] <- inprod(beta, y[(t-p):(t-1)])
     reg_mean[t] <- inprod(phi, x[t,])
     eps[t] <- y[t]-alpha-ar_mean[t]-ma_mean[t]-reg_mean[t]
   }
-  
   # Priors
   ...
   for(i in 1:k) {
@@ -173,11 +175,11 @@ abline(a=0, b = 1, col = 'red')
 
 ## Creating predictions inside the JAGS model
 
-- The posterior predictive check for a time series model is really just a check of the one step ahead predictions. However, posterior predictive checks are 
+- The posterior predictive check for a time series model is really just a check of the one step ahead predictions. However, posterior predictive checks are useful for all models, and are even more informative in complex models
 
 - We could create the one-step ahead predictions outside JAGS in R code, but it's usually easier to do it inside the code itself
 
-- We don't have to stop at one step ahead predictions, we can move on to 2 step ahead or further. We would expect the performance of the models to deteriorate
+- We don't have to stop at one step ahead predictions, we can move on to 2 step ahead or further. We would expect the performance of the models to deteriorate the further ahead we predict
 
 ## Two step-head predictions for an AR(1) model
 
@@ -257,7 +259,8 @@ model
 
 ```{r, results = 'hide', message=FALSE}
 num_forecasts = 10 # 10 extra years
-jags_run = jags(data = list(N = nrow(sheep) + num_forecasts, 
+jags_run = jags(data = list(N = nrow(sheep) + 
+                                  num_forecasts, 
                             y = c(sheep$sheep, 
                                   rep(NA, 
                                       num_forecasts))),
@@ -275,14 +278,13 @@ plot(c(sheep$year,2008:2017),y_med,type='l')
 
 ## Notes about the NA trick
 
-- Here I've just plotted the mean forecasts, but we have the full posterior ditribution so it's easy to create lower and upper credible intervals if required
+- Here I've just plotted the mean forecasts, but we have the full posterior distribution so it's easy to create lower and upper credible intervals if required
 
 ```{r}
 apply(y_pred,2,'quantile', c(0.05, 0.95))[,48:57]
 ```
 
-- The `NA` trick is fantastically in all kinds of modelling situtaitons, e.g. where we have genuinely missing data.
-
+- The `NA` trick is fantastically in all kinds of modelling situations, e.g. where we have genuinely missing data.
 
 ## Choosing different models: DIC
 

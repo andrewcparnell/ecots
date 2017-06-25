@@ -30,8 +30,8 @@ lapply(pkgs, library, character.only = TRUE)
 - The example we will use in this lecture is for palaeoclimate reconstruction when we observe pollen but are really interested in climate  
 - All state space models have two parts:
 
-  - The first part is called the _state equation_ which links the observations to a latent _stochatic process_
-  - The second part of the model is called the _evoluation equation_ which determines how the latent stochastic process changes over time
+    - The first part is called the _state equation_ which links the observations to a latent _stochatic process_
+    - The second part of the model is called the _evolution equation_ which determines how the latent stochastic process changes over time
 
 ## A simple linear state space model
 
@@ -40,7 +40,7 @@ lapply(pkgs, library, character.only = TRUE)
 $$ y_t = \alpha_y + \beta_y x_t + \epsilon_t,\; \epsilon_t \sim N(0, \sigma_y^2)$$
 - The _evolution equation_ could be a random walk:
 $$ x_t = x_{t-1} + \gamma_t,\; \gamma_t \sim N(0, \sigma_x^2)$$
-- The usual aim when fitting these models is to either estimate $x_t$, or the parameters, or to predict future values of $x_t$
+- The usual aim when fitting these models is to either estimate $x_t$, or the parameters $(\alpha_y, \beta_y, \sigma_y, \sigma_x)$, or to predict future values of $x_t$
 - This type of model is sometimes known as the _Kalman Filter_
 
 ## JAGS code for a linear state space model
@@ -53,7 +53,7 @@ model
   for (t in 1:T) {
     y[t] ~ dnorm(alpha_y + beta_y * x[t], sigma_y^-2)
   }
-  x[1] ~ dnorm(0, 0.01)
+  x[1] ~ dnorm(0, 100^-2)
   for (t in 2:T) {
     x[t] ~ dnorm(x[t-1], sigma_x^-2)
   }
@@ -121,9 +121,9 @@ legend('topleft',
 ## More advanced state space models
 
 - State space models can get much more advanced
-- We can make the state equation richer by making the relationship between the response and the latent time series richer
+- We can make the state equation richer by making the relationship between the response and the latent time series more complex
 - We can make the evolution equation richer by including a more complex time series model, e.g. an OU process
-- We can extend the model if the repsonse is multivariate, or allow the latent time series to be multivariate
+- We can extend the model if the response is multivariate, or allow the latent time series to be multivariate
 - In fact the model will often fit better if you have multivariate observations or stricter requirements about the time series applied to $x_t$
 
 # Change point models
@@ -178,7 +178,6 @@ model
 $$\mu(t) = \left\{ \begin{array}{ll} \alpha + \beta_1 (t - t_1) & \mbox{ if } t < t_1  \\
 \alpha + \beta_2 (t - t_1) & \mbox{ if } t \ge t_1 \end{array} \right.$$
 - In this version $\beta_1$ and $\beta_2$ are the rates of change before and after the change point, $\alpha$ is the mean value of $y$ at the change point
-- Code for multiple change point models is given in the R code `jags_changepoint.R`. We can compare between them using DIC
 
 ## JAGS code for CCPR
 
@@ -246,6 +245,19 @@ with(tg,
 with(tg,
      lines(year_AD[year_AD>=t_1_mean], alpha_mean + beta_2_mean * ( year_AD[year_AD>=t_1_mean] - t_1_mean ) ) )
 ```
+
+## Plots of the change-point parameters
+
+```{r, echo = FALSE}
+plot(real_data_run)
+```
+
+## Multiple change-points
+
+- We don't have to stop at just one change point, though the model gets a bit more complicated for 2, 3, ... change-points 
+- Often run into convergence problems with multiple change points. Usually we would _sort the change points_ so that e.g. $t_1 < t_2 < \ldots < t_k$
+- Usually fit 1CP model, 2CP model, etc, and choose via AIC/DIC/WAIC, etc
+- Impossible to fit these models in Stan!
 
 ## Summary
 

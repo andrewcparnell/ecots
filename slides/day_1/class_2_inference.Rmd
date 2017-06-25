@@ -9,7 +9,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(dev = 'pdf', fig.align = 'center')
+knitr::opts_chunk$set(dev = 'pdf')
 options(width = 40)
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 setwd("~/GitHub/ecots/slides/day_1")
@@ -41,7 +41,7 @@ We use these parameter estimates to make numerical predictions about the future
 - A probability distribution can come in (at least) three different forms:
 
     1. As a picture, usually represented in a bar chart or a line 
-    1. As an equation, which enables us to calculate
+    1. As an equation, which enables us to calculate probabilities (or probability densities)
     1. As a set of samples (similar to a data set) which follow the shape of the probability distribution
 
 ## Example: the normal distribution - picture
@@ -53,18 +53,18 @@ plot(x, dnorm(x, mean = 0, sd = 1), type = 'l')
 
 ## Example: the normal distribution - equation
 
-$$f(x) = \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
+$$f(x; \mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^2}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
 
 - Here $\mu$ (the mean) and $\sigma$ (the standard deviation) are the parameters of the normal distribution
 - If someone gives us some data and says to 'fit' a normal distribution they mean to estimate $\mu$ and $\sigma$ for their data
-- This distribution is known as continuous which means that the values of $x$ can be real numbers
+- This distribution is _continuous_ which means that the values of $x$ can be real numbers
 - The function in R `dnorm` just works out the above formula for given values of $x$, $\mu$, and $\sigma$
 
 
 ## Example: the normal distribution - samples
 
 ```{r}
-rnorm(40, mean = 0, sd = 1)
+rnorm(20, mean = 0, sd = 1)
 ```
 
 ## Example 2: the Poisson distribution - picture
@@ -90,13 +90,14 @@ rpois(100, lambda = 1)
 
 ## A few more useful probability distributions
 
-- Binomial. Discrete. Useful when the values have a lower and upper limit. Has two parameters $N$ and $p$ which determine how the values behave. Mean is $N \times p$ and standard deviation $\sqrt{N \times p \times (1-p)}$. R function is `dbinom`
+- Binomial. Discrete. Useful when the values have a lower and upper limit. Has two parameters $N$ and $p$ which determine how the values behave. Mean is $Np$ and standard deviation $\sqrt{Np(1-p)}$. R function is `dbinom`
 - $t$-distribution. Continuous. Looks like a normal distribution but has fatter tails. Good for capturing data with outliers. Has three parameters, mean, scale (like standard deviation), and shape to measure the heavy tailed-ness. R function is `dt`
 - Gamma distribution. Continuous but restricted to positive values only. Has two parameters shape and rate, which aren't easily interpretable. R function is `dgamma`
 - Uniform distribution. Continuous but restricted to a lower and upper range. Shape of graph is completely flat. R function is `dunif`
 
 ## Choosing a probability distribution
 
+- There is always a probability distribution for your data
 - When faced with a new set of data, which probability distribution should we choose?
 
     1. Think about the type of data. Is it discrete or continuous?
@@ -108,7 +109,7 @@ rpois(100, lambda = 1)
 
 ## How can we fit a probability distribution to some data?
 
-By fitting a probability distribution to some data we mean estimating the parameters of that distribution
+By fitting a probability distribution to some data we mean _estimating the parameters of that distribution_
 
 We will cover three techniques:
 
@@ -120,8 +121,8 @@ We will cover three techniques:
 
 Suppose we have 10 data points and we want to fit a normal distribution:
 ```{r}
-x = c(-0.23, -0.97, -1.94, -2.08, 2.55, 0.8, -0.03, -0.79, -0.6, 
-1.75)
+x = c(-0.23, -0.97, -1.94, -2.08, 2.55, 
+      0.8, -0.03, -0.79, -0.6, 1.75)
 ```
 
 The normal distribution has two parameters representing the mean and the standard deviation, so just calculate these values from the data and set $\hat{\mu} = \mbox{mean}(x)$ and $\hat{\sigma} = \mbox{sd}(x)$:
@@ -164,8 +165,8 @@ prod(dnorm(x, mean = 1, sd = 1))
 
 ## Logs
 
-- Likelihood values tend to get very small very quickly, so most people instead calculate the log of the likelihood instead, which is also easier to calculate
-- We usually compute the log of the probability distribution, and sum these values (recall the log of the product is the same as the sum of the logs)
+- Likelihood values tend to get very small very quickly, so most people instead work with the log of the likelihood, which is also easier to calculate
+- We usually compute the log of the probability distribution and sum these values (recall the log of the product is the same as the sum of the logs)
 ```{r}
 log(prod(dnorm(x, mean = 0, sd = 1)))
 sum(dnorm(x, mean = 0, sd = 1, log = TRUE))
@@ -182,21 +183,21 @@ sum(dnorm(x, mean = 0, sd = 1, log = TRUE))
 ## Checking the model 
 
 - We could choose almost any probability distribution and still get estimates of the parameters
-- We would also like to know whether the probabiliy distribution we chose actually matches the data
-- One neat way is a QQ-plot (Quantile-Quantile plo) which compares the quantiles of the data with the expected quantiles of the fitted probability distribution
+- We would also like to know whether the probability distribution we chose actually matches the data
+- One neat way is a QQ-plot (Quantile-Quantile plot) which compares the quantiles of the data with the expected quantiles of the fitted probability distribution
 - If the probability distribution fits the data well the points should lie on a straight line
 
 ## A QQ-plot
 
-```{r}
+```{r, fig.height = 6}
 qqnorm(x)
 qqline(x)
 ```
 
 ## How do we estimate the uncertainty in parameters?
 
-- Having the best values of the parameters isn't the whole story
-- We only have a limited set of data so we can't possibly know them exactly. We need to have estimates of uncertainty about the parameters
+- Having the 'best' values of the parameters isn't the whole story
+- We only have a limited set of data so we can't possibly know he true values exactly. We need to have estimates of uncertainty about the parameters
 - With only a small set of data, the parameter uncertainty should be large
 - With a larger data set, we should be able to get closer to the true values
 
@@ -204,12 +205,14 @@ qqline(x)
 
 - There is some mathematical theory which says that the estimated parameters are normally distributed themselves
 - The standard deviation of the estimated parameters depends on the second derivative of the likelihood. Again, we will leave this to the experts
+- R can calculate for us the standard deviation estimates of the parameters
 - This means that we can an estimated standard deviation of an estimated standard deviation!
+- The estimated standard deviation is usually called the _standard error_
 
 ## Quantiles of probability distributions
 
 - For the normal distribution we know that 68\% of samples lie approximately within 1 standard deviation, whilst 95\% of samples lie within approximately 2 standard deviations
-- So if we find that a parameter has an estimated value of 6 with standard deviation 1.5, we can calculate the 95\% confidence intervals as between 3 and 9
+- So if we find that a parameter has an estimated value of 6 with standard deviation 1.5, we can calculate the 95\% confidence interval as between 3 and 9
 - We don't have to stick to 68 or 95\% values. If we want, say, an 80\% interval, try:
 ```{r}
 qnorm(0.9)
@@ -222,11 +225,11 @@ qnorm(0.9)
 - These are based on testing a null hypothesis that a particular parameter value is (usually) 0
 - (Can anyone remember the proper definition of a $p$-value?)
 - I don't find these very useful but we will see them in lots of the default R output
-
+- None of the package we will use in this course (`forecast`, JAGS, and Stan) create $p$-values
 
 ## Summary 
 
 - Choosing a probability distribution is hard. For time series data we will give you lots of choices
 - Once you have a chosen model you can compute a likelihood
 - You can use an optimisation method to get you the best parameter values
-- Later in the course we will meet a method (called MCMC) which finds the best values and gets the uncertainty in one go
+- Later in the course we will meet a method (called MCMC) which finds the best values, also gets the uncertainty, and doesn't require the assumption of parameter normality

@@ -11,12 +11,11 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-#setwd("~/GitHub/ecots/slides/day_4")
-setwd('/Volumes/MacintoshHD2/GitHub/ecots/slides/day_4/')
+setwd("~/GitHub/ecots/slides/day_4")
+#setwd('/Volumes/MacintoshHD2/GitHub/ecots/slides/day_4/')
 options(width = 50)
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
 lapply(pkgs, library, character.only = TRUE)
-library(latex2exp)
 ```
 
 ## Learning outcomes
@@ -69,7 +68,7 @@ model
   }
 
   # Priors
-  alpha ~ dnorm(0.0, 0.01)
+  alpha ~ dnorm(0.0, 100^-2)
   gamma_1 ~ dunif(0, 100)
   gamma_2 ~ dunif(0, 100)
 }
@@ -202,7 +201,7 @@ with(r_1, print(c(DIC, pD)))
 with(r_2, print(c(DIC, pD)))
 ```
 
-- Suggests full GARCH model is best, despite the extra parameters
+- Suggests not much difference between the models
 
 ## Stochastic Volatility Modelling
 
@@ -233,8 +232,8 @@ model
   }
 
   # Priors
-  alpha ~ dnorm(0, 0.01)
-  mu ~ dnorm(0, 0.01)
+  alpha ~ dnorm(0, 100^-2)
+  mu ~ dnorm(0, 100^-2)
   phi ~ dunif(-1, 1)
   sigma ~ dunif(0,100)
 }
@@ -263,16 +262,16 @@ hist(ff_run_3$BUGSoutput$sims.list$phi, breaks=30)
 hist(ff_run_3$BUGSoutput$sims.list$sigma, breaks=30)
 ```
 
-## Plot of $h$
+## Plot of $\sqrt{\exp(h)}$
 
 ```{r, echo = FALSE}
-plot(1918:1988, exp(ff_run_3$BUGSoutput$median$h), type = 'l', ylab = 'h')
 h_post = ff_run_3$BUGSoutput$sims.list$h
 upp = apply(h_post, 2, quantile, 0.75)
 low = apply(h_post, 2, quantile, 0.25)
-lines(1918:1988, exp(low), col = 'red', lty = 2)
-lines(1918:1988, exp(upp), col = 'red', lty = 2)
-h_med = exp(apply(ff_run_3$BUGSoutput$sims.list$h,2,'quantile',0.5)/2)
+plot(1918:1988, sqrt(exp(ff_run_3$BUGSoutput$median$h)), type = 'l', ylab = 'sqrt(exp(h))', ylim = range(sqrt(exp(c(upp, low)))))
+lines(1918:1988, sqrt(exp(low)), col = 'red', lty = 2)
+lines(1918:1988, sqrt(exp(upp)), col = 'red', lty = 2)
+# h_med = sqrt(exp(apply(ff_run_3$BUGSoutput$sims.list$h,2,'quantile',0.5)/2))
 ```
 
 ## Comparison with previous models
@@ -286,7 +285,7 @@ with(r_2, print(c(DIC, pD)))
 with(r_3, print(c(DIC, pD)))
 ```
 
-Even better again, despite many extra parameters due to $h$!
+Much better fit, despite many extra parameters due to $h$!
 
 ## Summary
 

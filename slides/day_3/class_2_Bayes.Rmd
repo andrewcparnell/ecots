@@ -15,6 +15,8 @@ setwd("~/GitHub/ecots/slides/day_3")
 options(width = 50)
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
 lapply(pkgs, library, character.only = TRUE)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
 ```
 
 ## Learning outcomes
@@ -68,10 +70,10 @@ $$p(\theta|x) = \frac{p(x|\theta) \times p(\theta)}{p(x)}$$
 ## Choosing a prior
 
 - The key to choosing a prior distribution is to choose values which you believe represent the reasonable range that the parameter can take, or come from a related study in the literature
-- A prior which is a strong constraint on the literature is called an _informative prior_
+- A prior which is a strong constraint on the parameters is called an _informative prior_
 - Some people argue that informative priors are bad, others that they are absolutely necessary in every model
 - Sometimes an informative prior can be the difference between being able to fit the model or not
-- Most people forget that choosing a likelihood probability distribution is exactly the same task
+- Most people forget that choosing a likelihood probability distribution is exactly the same task as choosing a prior
 
 ## Practical differences between frequentist statistics and Bayes
 
@@ -101,6 +103,8 @@ $$p(\theta|x) = \frac{p(x|\theta) \times p(\theta)}{p(x)}$$
 
 - Stan positives: very flexible, uses sensible distribution names, everything is declared, lots of documentation support, written by people at the top of the field
 - Stan negatives: cannot have discrete parameters, some odd declaration choices, slower to run code, code tends to be longer
+
+
 - JAGS positives: very quick for simple models, no declarations required, a bit older than Stan so more queries answered online
 - JAGS negatives: harder to get complex models running, not as fancy an algorithm as Stan, crazy way of specifying normal distributions
 
@@ -113,7 +117,6 @@ with(sl, plot(year_AD, sea_level_m))
 
 ## Fitting linear regression models in JAGS
 
-Model code:
 \small
 ```{r, message=FALSE, results='hide'}
 library(R2jags)
@@ -195,11 +198,11 @@ model {
 
 ## Running the Stan version
 
-```{r, fig.height = 5, message=FALSE, results='hide'}
+```{r, fig.height = 5, results='hide'}
 library(rstan)
 stan_run = stan(data = list(N = nrow(sl), 
                             y = sl$sea_level_m,
-                            x = sl$year_AD),
+                            x = sl$year_AD/1000),
                 model_code = stan_code)
 ```
 

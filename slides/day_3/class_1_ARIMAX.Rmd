@@ -93,6 +93,8 @@ plot(forecast(my_model_ARIMAX111, xreg = 2014:2033, h=20))
 
 ## A cheat way of skipping model choice
 
+\small
+
 - The `forecast` package has a cheat function which will fit _all_ of the possible ARIMA models for you and report the best one. It's called `auto.arima`
 ```{r}
 auto.arima(wheat$wheat, xreg = wheat$year)
@@ -124,9 +126,9 @@ where $n$ is the number of data points (after differencing)
 
 - Often the gold standard by which time series models are judged as how well they forecast future values of the series
 
-- Without waiting for more data to become available, we can remove some of the data points at the end of the series, fit the model, and forecast into the future. This is leave one out cross validation or LOO-CV
+- Without waiting for more data to become available, we can remove some of the data points at the end of the series, fit the model, and forecast into the future. This is _leave one out cross validation_ or LOO-CV
 
-- This is very computationally intensive as we have to re-fit the model and get new parameter estimates at every step
+- LOO_CV is very computationally intensive as we have to re-fit the model and get new parameter estimates at every step
 
 ## Leave none out cross validation
 
@@ -164,32 +166,31 @@ accuracy(my_model_ARIMAX111)
 
 (from https://robjhyndman.com/hyndsight/tscv/)
 
-## Implementing loo-CV for an ARIMAX model
+## Implementing loo-CV for an ARIMA model
 
 ```{r}
 n_min = 30 # minimum length for model
 n = nrow(wheat)
-mae = forecasts = rep(NA, n - n_min)
+ae = forecasts = rep(NA, n - n_min)
 # Loop through time series
 for(i in 1:(n-n_min)) {
   # Fit to the training set
-  curr_model = auto.arima(wheat$wheat[1:(i + n_min - 1)])
+  curr_model = Arima(wheat$wheat[1:(i + n_min - 1)], 
+                     c(1, 1, 1))
   # Create 1 step ahead forecasts
   forecasts[i] = forecast(curr_model, h = 1)[['mean']]
   # Get mean absolute error
-  mae[i] = abs(forecasts[i] - wheat$wheat[i + n_min])
+  ae[i] = abs(forecasts[i] - wheat$wheat[i + n_min])
 }
-mean(mae)
+mean(ae)
 ```
 
 ## Plotting the forecasts
 
 ```{r}
-plot(wheat$wheat[31:n], type = 'l')
-lines(forecasts, col = 'red')
+plot(wheat$wheat, type = 'l')
+lines(31:n, forecasts, col = 'red')
 ```
-
-- In fact all the ARIMA models chosen here are (0, 1, 0)
 
 ## Forecasting and scoring rules
 

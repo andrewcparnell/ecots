@@ -132,7 +132,7 @@ Arima(y, order = c(0, 0, 1))
 
 ## Extending to MA(q)
 
-- It's reasonably straightforward to extend this model to have the current value of $y$ depending on more than one previous residual
+- As with the AR(p) process we can extend this model to have the current value of $y$ depending on more than one previous residual
 - The model becomes an MA(q) model with:
 $$y_t \sim N(\alpha + \theta_1 \epsilon_{t-1} + \theta_2 \epsilon_{t-2} + \ldots + \theta_q \epsilon_{t-q}, \sigma^2)$$
 - The parameters are as before, except there are now $q$ values of $\theta$. 
@@ -151,7 +151,7 @@ Arima(y, order = c(0, 0, 3))
 - You can create a one step ahead forecast for an MA(1) model by:
 $$\hat{y}_{t+1} = \alpha + \theta \epsilon_t$$
 
-- Forecasts of more than one step ahead will be pretty boring, as every future prediction of $\hat{\epsilon_t}$ will be 0
+- Forecasts of more than one step ahead will be pretty boring, as every future prediction of $\hat{\epsilon}_t$ will be 0
 
 - Thus MA(q) models are only really informative if you are forecasting $q-1$ steps ahead
 

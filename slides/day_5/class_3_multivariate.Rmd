@@ -1,5 +1,5 @@
 ---
-title: 'Class 3: Multivariate time series models, Gaussian processes, and co-integration'
+title: 'Class 3: Multivariate time series models, Splines, and Gaussian processes'
 author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
   \newline \includegraphics[width=1cm]{../UCDlogo.pdf}
 output:
@@ -152,7 +152,7 @@ with(sheep, plot(year, sheep, type = 'l'))
 ```{r, fig.height = 4}
 x = seq(-3, 3, length = 100)
 X = cbind(1, x, x^2, x^3)
-plot(x,X[,1],ylim=range(X), type = 'l')
+plot(x, X[,1], ylim = range(X), type = 'l')
 for(i in 2:ncol(X)) lines(x,X[,i], col = i)
 ```
 
@@ -197,7 +197,7 @@ $$\beta_j \sim N(\beta_{j-1}, \sigma_b^2)$$
 
 ## Example code in Stan
 
-\tiny
+\small
 ```{r}
 stan_code = '
 data {

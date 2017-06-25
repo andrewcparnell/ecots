@@ -24,8 +24,8 @@ lapply(pkgs, library, character.only = TRUE)
 
 ## How this course works
 
-- This course lives on GitHub, which means anyone can see the slides, code, etc, and make comments on it
-- The timetable html document provides links to all the pdf slides and practicals
+- This course lives on GitHub, at [github.com/andrewcparnell/ecots](www.github.com/andrewcparnell/ecots) which means anyone can see the slides, code, etc, and make comments on it
+- The timetable html document provides links to all the pdf slides, handouts, data and practicals
 - Let me know if you spot mistakes, as these can be easily updated on the GitHub page
 - There is an issues page if you want to ask questions
 
@@ -33,11 +33,11 @@ lapply(pkgs, library, character.only = TRUE)
 
 - All the slides and practicals are available in pdf format for you to annotate
 - In the background, the slides and the practicals are written in `Rmarkdown` format, which means you can load them up in Rstudio and see how everything was created
-- When you have spare time, feel free to load up the .rmd files and run the code in the background
+- When you have spare time, feel free to load up the `.Rmd` files and run the code in the background
 
 ## R code in slides
 
-- Many of the slides contain R code and output (some of which may be hidden in the .rmd file)
+- Many of the slides contain R code and output (some of which may be hidden in the `.Rmd` file)
 - An example:
 ```{r, fig.height = 5}
 lynx = read.csv(file = '../../data/lynx.csv')
@@ -55,7 +55,8 @@ with(lynx, plot(year, number, type = 'l'))
     - _Bayesian Methods for Ecology_. by McCarthy
     - _Bayesian Data Analysis_ by Gelman et al
 
-- Looking for data? Try: [https://datamarket.com/data/list/?q=provider:tsdl]
+- Looking for data? Try: https://datamarket.com/data/list/?q=provider:tsdl 
+- (see also sources in Practical 3)
 
 ## What is a time series?
 
@@ -162,15 +163,15 @@ table(diff(ice$Age))
 ## Goals of time series analysis
 
 - Predict future values of the response variable
-- Try to predict the behaviour of the response variable for missing or interpolated times
-- Try and explain which factors are causing the time series to change
-- Try to understand the underlying behaviour of the time series
+- Interpolate or smooth the response variable for missing or non-measured times
+- Explain which factors are causing the time series to change
+- Understand the underlying behaviour of the time series
 
 ## Summary 
 
 This course takes a practical approach, and should help you:
 
-- Understand modern time series modelling techniques.
-- Get and use tools for thinking about and dealing with uncertainty.
-- Fit time series models, and make predictions.
-- Understand your time series data, and the process that generates it.
+- Understand modern time series modelling techniques
+- Get and use tools for thinking about and dealing with uncertainty
+- Fit time series models, and make predictions
+- Understand your time series data, and the process that generates it

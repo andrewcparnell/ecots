@@ -49,9 +49,10 @@ i.e. the _differences_ are random normally-distributed noise
 
 ## Differencing 
 
-- Differencing is a great way of getting rid of a linear trend
-- If $y_t \approx y_{t-1} + b$ then there will be an increasing linear slope in the time series. 
+- Differencing is a great way of getting rid of a trend
+- If $y_t \approx y_{t-1} + b$ then there will be an increasing linear slope in the time series
 - Creating $y_t - y_{t-1}$ will remove it and all values will hover around the value $b$
+- Even when the trend is non-linear differencing might help
 - Differencing twice will remove a quadratic trend for the same reasons
 - You can do even higher levels of differencing but this starts to cause problems
 - The twice differenced series is:
@@ -146,6 +147,8 @@ pacf(diff(wheat$wheat))
 Arima(wheat$wheat, order = c(0, 1, 0))
 ```
 
+- This is just a random walk model. Can also get these from `forecast` with the function `naive`
+
 ## Next models
 
 - Try ARIMA(1, 1, 1), ARIMA(1, 1, 0), ARIMA(0, 1, 1)
@@ -172,7 +175,7 @@ qqline(my_model_ARIMA111$residuals)
 plot(forecast(my_model_ARIMA111,h=20))
 ```
 
-## Why does the difference not continus into the future?
+## Why does the difference not continue into the future?
 
 - You might have expected the forecasts to continue rising into the future due to the difference
 - The MA part of the model is obviously flat as previously discussed as there are no further errors to correct
@@ -181,7 +184,8 @@ plot(forecast(my_model_ARIMA111,h=20))
 ## Summary
 
 - ARIMA models extend the ARMA framework to further add in differencing
-- A single difference will remove a linear trend, a second difference a quadratic trend
+- ARIMA models are no longer stationary as soon as $d>0$
+- A single difference will remove a linear trends, a second difference squadratic trends
 - Can spot the need for differencing from the time series plot and the ACF
 - Do not over-difference your data!
 

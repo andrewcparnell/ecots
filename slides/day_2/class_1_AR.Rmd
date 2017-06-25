@@ -9,7 +9,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(dev = 'pdf', fig.align = 'center')
+knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 setwd("~/GitHub/ecots/slides/day_2")
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
@@ -47,7 +47,7 @@ $$y_t = \mbox{trend}_t + \mbox{seasonality}_t + \mbox{error}_t$$
 
 ## A time series with a big trend?
 
-```{r random trend, echo=FALSE}
+```{r, echo=FALSE}
 set.seed(123)
 x <- cumsum(sample(c(-1, 1), size=500, replace=TRUE))
 plot(x, type = 'l')
@@ -55,7 +55,7 @@ plot(x, type = 'l')
 
 ## Generating the series
 
-```{r simulate random walk, echo=TRUE}
+```{r, echo=TRUE}
 set.seed(123)
 y <- cumsum(sample(c(-1, 1), size=1000, replace=TRUE))
 ```
@@ -108,7 +108,7 @@ There is evidence that animals such as sharks follow a levy flight pattern (left
 - (_auto_ = _self_, i.e. correlation of the series with itself)
 - We calculate the correlation of the series with itself shifted by 1 time point
 - The shifted data set is known as the _lagged_ time series
-- We repeate the autocorrelation calculation for 1 lag, 2, lags, 3 lags, etc
+- We repeate the autocorrelation calculation for 1 lag, 2 lags, 3 lags, etc
 
 ## Plotting the acf
 
@@ -151,13 +151,13 @@ $$y_t \sim N(\alpha + \beta y_{t-1}, \sigma^2)$$
 
     - Values close to 1 indicate that the series is almost like a random walk. 
     - Values close to 0 indicate that the series is almost completely composed of random normally-distributed error terms
-    - Values less than 0 are very rarely found and indicate that the series is 'repulsive'
+    - Values less than 0 indicate that the series is 'repulsive'
     - Values greater than 1 (or less than -1) indicate that the series is chaotic
 
 ## Simulating from an AR(1) process
 
 - We can simulate from an AR(1) process with:
-```{r simulate AR1, echo=TRUE}
+```{r, echo=TRUE}
 set.seed(123)
 T = 1000
 t_seq = 1:T
@@ -173,8 +173,7 @@ for(t in 2:T) y[t] = rnorm(1,alpha + beta * y[t-1],
 
 ## Some features of an AR(1) process
 
-- In an AR(1) process, a shock will have an effect for an infinite amount of time!
-- In practice, this decays exponentially if $\beta<1$.
+- For an AR(1) process, the ACF decays exponentially if $\beta<1$.
 - We can see this if we look at the acf
 ```{r, echo=TRUE, fig.height = 4}
 acf(y)
@@ -221,7 +220,7 @@ Thus you can have a good initial guess at identifying $p$ in an AR(p) model from
 
 ## Simulating from an AR(p) process {.smaller}
 
-```{r simulate ARp, echo=TRUE, fig.height = 3}
+```{r, echo=TRUE, fig.height = 3}
 set.seed(100)
 T = 500
 t_seq = 1:T
@@ -229,7 +228,7 @@ sigma = alpha = 1
 p = 3
 beta = sort(runif(p, 0, 0.2), decreasing = TRUE)
 y = rep(NA,T)
-y[1:p] = rnorm(p,0,sigma)
+y[1:p] = rnorm(p, mean = alpha, sd = sigma)
 for(t in (p+1):T) 
   y[t] = rnorm(1,
                alpha + sum( beta * y[(t-1):(t-p)] ),
@@ -250,19 +249,19 @@ $$\hat{y}_{t+1} = \hat{\alpha} + \hat{\beta} y_t$$
 - If we want to forecast further ahead we have to start using the forecast values, e.g.
 $$\hat{y}_{t+2} = \hat{\alpha} + \hat{\beta} \hat{y}_{t+1}$$
 - We can create a confidence interval for our predictions by using the standard errors of $\hat{\alpha}$ and $\hat{\beta}$
-- We can create a _prediction interval_ by also including the values $\hat{\sigma}$
+- We can create a _prediction interval_ by also including the values $\hat{\sigma}$ and simulating from the full probability distribution
 
 ## Stationarity
 
 - One of the key concepts in time series is _stationarity_
 - A time series is said to be weakly stationary if:
 
-    - The mean is stable
-    - The variance is stable
-    - The autocorrelation doesn't depend on where you are in the series
+    1. The mean is stable
+    1. The variance is stable
+    1. The autocorrelation doesn't depend on where you are in the series
   
-- All AR models are staionary  
-- The first two can be checked from plots of the time series, but the last one is quite tricky
+- The first can be checked from plots of the time series, but the last one is quite tricky
+- All AR models are stationary provided the restrictions on $\beta$ are met
 
 ## What if a series isn't stationary?
 

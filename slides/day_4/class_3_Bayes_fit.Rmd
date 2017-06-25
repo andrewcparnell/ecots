@@ -1,5 +1,5 @@
 ---
-title: 'Class 2: Stochastic volatility models and heteroskedasticity '
+title: 'Class 3: Fitting Bayesian time series models'
 author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
   \newline \includegraphics[width=1cm]{../UCDlogo.pdf}
 output:
@@ -11,8 +11,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-#setwd("~/GitHub/ecots/slides/day_4")
-setwd('/Volumes/MacintoshHD2/GitHub/ecots/slides/day_4/')
+setwd("~/GitHub/ecots/slides/day_4")
+#setwd('/Volumes/MacintoshHD2/GitHub/ecots/slides/day_4/')
 options(width = 50)
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
 lapply(pkgs, library, character.only = TRUE)
@@ -57,8 +57,21 @@ options(mc.cores = parallel::detectCores())
 
 - You can set up a model in Stan and then choose whether you want MCMC (which will give you the parameters with uncertainties) or to optimise the values (which will just give you the most likely values). The latter is much faster
 
-- Consider an AR(1) model in Stan
-```{r}
+- Consider an AR(1) model in Stan:
+```{r, eval = FALSE}
+stan_code = '
+...
+model {
+  for (t in 2:N) 
+    y[t] ~ normal(alpha + beta * y[t-1], sigma);
+  # Priors
+  alpha ~ normal(0, 10);
+  beta ~ normal(0, 10);
+  sigma ~ uniform(0, 100);
+}'
+```
+
+```{r, include = FALSE}
 stan_code = '
 data {
   int<lower=0> N; # number of observations
@@ -81,7 +94,7 @@ model {
 
 ## Reminder: wheat data
 
-```{r}
+```{r, fig.height = 6}
 ff = read.csv('../../data/forest_fires.csv')
 with(ff, plot(year, acres, type = 'l',
                 ylab = 'Number of acres',
@@ -90,25 +103,27 @@ with(ff, plot(year, acres, type = 'l',
 
 ## Run the model
 
+\tiny 
+
 - Set up a stan model
-```{r}
+```{r, message=FALSE, results='hide'}
 stan_mod_ar1 = stan_model(model_code = stan_code)
 ```
 
-- Now choose either:
-
-- Full MCMC
+- Now choose either full MCMC...
 ```{r, eval = FALSE}
 stan_run_ar1 = sampling(stan_mod_ar1,
                         data = list(y = scale(ff$acres)[,1],
                                     N = nrow(ff)))
 ```
 
-...or just optimizing:
-```{r}
+- ...or just optimizing:
+```{r, message = FALSE, results = 'hide'}
 stan_opt_ar1 = optimizing(stan_mod_ar1,
                           data = list(y = scale(ff$acres)[,1],
                                       N = nrow(ff)))
+```
+```{r}
 print(stan_opt_ar1)
 ```
 
@@ -121,6 +136,7 @@ print(stan_opt_ar1)
 
 ## Code for a an AR(1)-SVM
 
+\small
 ```{r}
 stan_code = '
 data {
@@ -146,30 +162,34 @@ model {
 
 ## Find the posterior distribution
 
-```{r}
+\small 
+```{r, include = FALSE}
 stan_mod_ar1_svm = stan_model(model_code = stan_code)
 stan_run_ar1_svm = sampling(stan_mod_ar1_svm,
                               data = list(y = scale(ff$acres)[,1],
                                           N = nrow(ff)))
+```
+```{r}
 print(stan_run_ar1_svm)
 ```
 
 ## Plot the important parameters
 
-```{r}
+```{r, echo = FALSE, message = FALSE, results = 'hide'}
 plot(stan_run_ar1_svm, pars = c('alpha', 'beta', 'alpha_h', 'beta_h', 'sigma_h'))
 ```
 
-## Plot the $h$ values
+## Plot the $\sqrt{\exp(h)}$ values
 
 ```{r}
 h_post = summary(stan_run_ar1_svm, pars = c("h"))$summary[,'50%']
-plot(ff$year, exp(h_post), type = 'l')
+plot(ff$year, sqrt(exp(h_post)), type = 'l')
 ```
 
 ## A repeated measures example
 
 - Let's return to the Geese example all the way back on day 1:
+
 ```{r, echo = FALSE}
 geese = read.csv('../../data/geese_isotopes.csv')
 geese$date = as.Date(paste(geese$year, geese$month ,geese$day, sep = '-'))
@@ -185,19 +205,21 @@ with(geese, plot(int_days[o], scale(d13CPl[o])[,1],
 
 - We have _repeated measures_ - more than one observation at each time point. 
 
-- We would like the model to be seasonal with period 365
+- We would like the model to fill in the gaps and separate out the uncertainty due to the change over time from the uncertainty to do with repeated measurement
 
 - We have to separate out the model into two layers:
 
     1. The observations and how they link to a single time series value on that day
-    1. The underlying frequency model defined at each time point
+    1. The underlying time series model defined at each time point
     
 - A possible model:
-$$y_t \sim N(\mu_{\mbox{day}_t}, \sigma_{\mbox{day}}^2)$$
-$$\mu_{\mbox{day}} = \alpha + \beta \sin \left[ \frac{2 \pi \mbox{day}_t}{365}\right]$$
+$$y_t \sim N(\mu_{\mbox{day}_t}, \sigma^2)$$
+$$\mu_{\mbox{day}} \sim N(\mu_{\mbox{day}-1}, \sigma_\mu^2)$$
 
     
-## JAGS code for a repeated measures frequency model
+## Stan code for a repeated measures random walk model
+
+\tiny
 
 ```{r}
 stan_code = '
@@ -217,36 +239,36 @@ model {
   for(t in 2:N_day) {
     mu[t] ~ normal(mu[t-1], sigma_mu);
   }
-
   sigma ~ uniform(0, 10);
   sigma_mu ~ uniform(0, 10);
   for (i in 1:N)
     y[i] ~ normal(mu[day[i]], sigma);
-}
-'
+}'
 ```
 
 ## Optimise the parameters
 
-```{r, results = 'hide', message=FALSE}
+```{r, include = FALSE}
 stan_mod_rm = stan_model(model_code = stan_code)
 stan_run_rm = sampling(stan_mod_rm,
                        data = list(y = scale(geese$d13CPl)[,1],
                                    N = nrow(geese),
                                    day = geese$int_days,
                                    N_day = 365))
+```
+```{r}
 print(stan_run_rm, pars = c('sigma_mu', 'sigma'))
 ```
 
 ## Plot the interesting parameters
 
-```{r}
+```{r, echo = FALSE, message = FALSE, results = 'hide'}
 plot(stan_run_rm, pars = c('sigma_mu', 'sigma'))
 ```
 
-# Plot the best fit model
+## Plot the best fit model
 
-```{r}
+```{r, fig.height = 4}
 with(geese, plot(int_days[o], scale(d13CPl[o])[,1],
                                   ylab = 'd13C',
                  xlab = 'Day of year'))
@@ -289,7 +311,7 @@ $$y = \alpha + \beta_1 x_{1} + \beta_2 x_2 + \ldots \beta_{100} x_{100} + \epsil
 
 - You want to find out which of $x_1, \ldots, x_{100}$ is important in predicting $y$
 
-- You could fit lots of different models with combinations of ecah of the variables
+- You could fit lots of different models with combinations of each of the variables
 
 - Or you could put a prior distribution that shrinks them towards 0, e.g.
 $$\beta_j \sim N(0, \sigma_{\beta}^2)$$
@@ -304,9 +326,9 @@ $$\beta_j \sim N(0, \sigma_{\beta}^2)$$
 
 - We would fit a model for a large number of $p$ values and put a prior to reduce the size on the coefficients on them
 
-- The normal isn't the only choice, an even more popular one is the double exponential or laplace distribution
+- The normal isn't the only choice, an even more popular one is the double exponential or Laplace distribution
 
-```{r, fig.height = 3}
+```{r, fig.height = 4, echo = FALSE, message = FALSE}
 #install.packages('rmutil')
 library(rmutil)
 curve(dlaplace, from = -3, to = 3, ylab = '')
@@ -324,6 +346,7 @@ with(wheat, plot(year, wheat, type = 'l',
 
 ## Fitting a shrinkage AR model
 
+\tiny
 ```{r}
 stan_code = '
 data {
@@ -355,18 +378,20 @@ model {
 
 ## Fitting the model
 
-```{r}
+```{r, include = FALSE}
 stan_mod_ar_shrink = stan_model(model_code = stan_code)
 stan_run_ar_shrink = sampling(stan_mod_ar_shrink,
                        data = list(y = scale(wheat$wheat)[,1],
                                    N = nrow(wheat),
                                    max_P = 10))
+```
+```{r}
 print(stan_run_ar_shrink)
 ```
 
 ## Plot the AR parameters
 
-```{r}
+```{r, message = FALSE, results = 'hide'}
 plot(stan_run_ar_shrink, pars = c('beta'))
 ```
 
@@ -374,4 +399,4 @@ plot(stan_run_ar_shrink, pars = c('beta'))
 
 - Stan is a pain, but can do some really powerful things
 - Using JAGS and Stan we can fit some really powerful models
-- With a BAyesian model you can do the model selection inside the modelling step
+- With a Bayesian model you can do the model selection inside the modelling step
