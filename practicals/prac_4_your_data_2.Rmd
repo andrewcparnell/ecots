@@ -4,6 +4,7 @@ author: "Andrew Parnell"
 output:
   pdf_document: default
   html_document: default
+urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
