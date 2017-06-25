@@ -23,7 +23,7 @@ lapply(pkgs, library, character.only = TRUE)
 In this practical you will:
 
 - Fit a basic ARIMA model to the `airquality` data
-- See if we can beat it with some of the other methods available through `forecast`
+- See if you can beat it with some of the other methods available through `forecast`
 - Quantify the accuracy of each method
 
 As yesterday, you should work your way through the questions and put your hand up if you get stuck. The answer script is also available in the practicals folder.
