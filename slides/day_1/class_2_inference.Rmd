@@ -76,7 +76,7 @@ barplot(dpois(x, lambda = 1), names.arg = x)
 
 ## Example 2: the Poisson distribution - equation
 
-$$f(x) = \frac{e^{-\lambda} \lambda^x}{x!}$$
+$$f(x; \lambda) = \frac{e^{-\lambda} \lambda^x}{x!}$$
 
 - The only parameter in the Poisson distribution is $\lambda$ which represents both the mean and the variance, which have to be equal
 - The Poisson is a discrete probability distribution, which means that the data values have to be integers
