@@ -89,7 +89,7 @@ The steps don't have to be the same size.
 
 - A step size with a Gaussian distribution is useful for modelling stock markets. 
 - If the step size probability distribution is heavy tailed, we have _Levy flight_.
-- They also don't have to to be in 1 dimension. We can simulate random walks in 2, 3, ... dimensions by adding multivariate steps
+- They also don't have to be in 1 dimension. We can simulate random walks in 2, 3, ... dimensions by adding multivariate steps
 
 ## Levy flight vs Brownian motion in 2D
 
@@ -108,7 +108,7 @@ There is evidence that animals such as sharks follow a levy flight pattern (left
 - (_auto_ = _self_, i.e. correlation of the series with itself)
 - We calculate the correlation of the series with itself shifted by 1 time point
 - The shifted data set is known as the _lagged_ time series
-- We repeate the autocorrelation calculation for 1 lag, 2 lags, 3 lags, etc
+- We repeat the autocorrelation calculation for 1 lag, 2 lags, 3 lags, etc
 
 ## Plotting the acf
 
@@ -181,7 +181,7 @@ acf(y)
 
 ## Extending the AR model
 
-- An AR(2) process is written as
+- An AR(2) process is written as:
 $$y_{t} = \alpha + \beta_1 y_{t-1} + \beta_2 y_{t-2} + \epsilon_{t}$$
 
 - An AR(p) process can be written as:

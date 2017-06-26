@@ -143,7 +143,7 @@ lines(fitted(my_model_ARIMAX111), col = 'red')
 
 ## Accuracy measures from `forecast`
 
-- For the fitted values you can also measures of accuracy such as root mean square error
+- For the fitted values you can also use measures of accuracy such as root mean square error
 
 - These are all calculated by comparing the fitted values with the forecasted values
 

@@ -185,7 +185,7 @@ plot(forecast(my_model_ARIMA111,h=20))
 
 - ARIMA models extend the ARMA framework to further add in differencing
 - ARIMA models are no longer stationary as soon as $d>0$
-- A single difference will remove a linear trends, a second difference squadratic trends
+- A single difference will remove a linear trends, a second difference quadratic trends
 - Can spot the need for differencing from the time series plot and the ACF
 - Do not over-difference your data!
 

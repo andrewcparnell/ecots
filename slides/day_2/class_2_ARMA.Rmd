@@ -51,7 +51,7 @@ $$y_t \sim N( \alpha + \beta y_{t-1}, \sigma^2)$$
 ## Moving average models and the ACF/PACF
 
 - Recall that the sample partial autocorrelation function (PACF) can be used to diagnose whether an AR model is appropriate (and also suggest the order $p$)
-- For the MA model, it is the sample autocorrelation function (ACF) helps determine the order of the model
+- For the MA model, it is the sample autocorrelation function (ACF) that helps determine the order of the model
 ```{r,echo=FALSE,fig.height=3, fig.width = 5}
 q = 1 # Order
 T = 100
