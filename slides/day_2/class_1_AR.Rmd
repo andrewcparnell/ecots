@@ -81,14 +81,14 @@ Where do you end up?
 $$ \hat{Y}_{t} = Y_{t-1} $$
 
 - The variance of the series gets larger as you move into the future
-- But in an infinite series, every point (including zero) is crossed an infinite number of times. This causes the __gambler's ruin__.
+- But in an infinite series, every point (including zero) is crossed an infinite number of times. This causes the __gambler's ruin__
 
 ## Random walk applications
 
 The steps don't have to be the same size.
 
-- A step size with a Gaussian distribution is useful for modelling stock markets. 
-- If the step size probability distribution is heavy tailed, we have _Levy flight_.
+- A step size with a Gaussian distribution is useful for modelling stock markets 
+- If the step size probability distribution is heavy tailed, we have _Levy flight_
 - They also don't have to be in 1 dimension. We can simulate random walks in 2, 3, ... dimensions by adding multivariate steps
 
 ## Levy flight vs Brownian motion in 2D
@@ -173,7 +173,7 @@ for(t in 2:T) y[t] = rnorm(1,alpha + beta * y[t-1],
 
 ## Some features of an AR(1) process
 
-- For an AR(1) process, the ACF decays exponentially if $\beta<1$.
+- For an AR(1) process, the ACF decays exponentially if $\beta<1$
 - We can see this if we look at the acf
 ```{r, echo=TRUE, fig.height = 4}
 acf(y)
