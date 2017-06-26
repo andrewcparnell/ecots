@@ -37,7 +37,7 @@ Tasks:
 
 1. First create some plots of the variables and make sure you understand the relationship between them. Hint: A good start can be found in the `help(airquality)` file (see the example at the bottom of that page), though that plot isn't very helpful for visualisation of the month and day variables, nor for visualising the shape of individual variables (e.g. using `hist`)
 
-1. Fit a linear regression model using `lm` with `Ozone` as the response and the other variables as covariates. Use the `summary` method to interpret your findings. (Note that R here is automatically removing rows with missing variables)
+1. Fit a linear regression model using `lm` with `Ozone` as the response and all the other variables as covariates. Use the `summary` method to interpret your findings. (Note that R here is automatically removing rows with missing variables)
 
 1. Have a look at the residuals of the model (e.g. histograms and QQ-plots). Does the model fit well? 
  
