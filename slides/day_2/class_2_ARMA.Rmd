@@ -149,11 +149,11 @@ Arima(y, order = c(0, 0, 3))
 ## Forecasting an MA value
 
 - You can create a one step ahead forecast for an MA(1) model by:
-$$\hat{y}_{t+1} = \alpha + \theta \epsilon_t$$
+$$\hat{y}_{t+1} = \hat{\alpha} + \hat{\theta} \epsilon_t$$
 
 - Forecasts of more than one step ahead will be pretty boring, as every future prediction of $\hat{\epsilon}_t$ will be 0
 
-- Thus MA(q) models are only really informative if you are forecasting $q-1$ steps ahead
+- Thus MA(q) models are only really informative if you are forecasting $q$ steps ahead
 
 ## Combining AR and MA into ARMA
 
@@ -180,7 +180,7 @@ Arima(y, order = c(1, 0, 1))
 
 $$y_t = \alpha + \sum_{i=1}^p \beta_i y_{t-i} + \sum_{j=1}^q \theta_j \epsilon_{t-q} + \epsilon_t$$
 
-- The values of $\beta$ have to be tightly controlled to get a series that is stationary, though this is only really a problem if we want to simulate the time series
+- The values of $\beta$ and $\theta$ have to be tightly controlled to get a series that is stationary, though this is only really a problem if we want to simulate the time series
 
 - Occasionally you will run into problems with `Arima` because it doesn't use maximum likelihood (by default) to fit the models. It uses something faster and more approximate instead
 
