@@ -297,12 +297,11 @@ ets(AirPassengers, allow.multiplicative.trend = TRUE)
 
 forecast_spline <- splinef(tide$sea_level_m)
 forecast_spline
-summary(fcast)
-plot(fcast)
 
 fcast <- splinef(tide$sea_level_m, method = "mle", 
                  h = 15, level = c(70, 90))
-fcast
+summary(fcast)
+plot(fcast)
 
 # Tomorrow work through series using all forecast steps including 
 # investigating residuals and accuracy

@@ -271,7 +271,7 @@ y = rep(NA,T)
 y[1] = rnorm(1,0,sigma)
 for(t in 2:T) y[t] = rnorm(1, alpha + phi * y[t-1], sigma)
 # plot
-plot(t_seq,y,type='l')
+plot(t_seq, y, type='l')
 
 # Jags code ---------------------------------------------------------------
 
@@ -306,10 +306,10 @@ model_parameters =  c("alpha","phi","sigma")
 model_run = jags(data = model_data,
                  parameters.to.save = model_parameters,
                  model.file=textConnection(model_code),
-                 n.chains=4, # Number of different starting positions
-                 n.iter=1000, # Number of iterations
-                 n.burnin=200, # Number of iterations to remove at start
-                 n.thin=2) # Amount of thinning
+                 n.chains = 4, # Number of different starting positions
+                 n.iter = 1000, # Number of iterations
+                 n.burnin = 200, # Number of iterations to remove at start
+                 n.thin = 2) # Amount of thinning
 
 # Check the output - are the true values inside the 95% CI?
 # Also look at the R-hat values - they need to be close to 1 if convergence has been achieved
@@ -346,10 +346,10 @@ y[1:q] = rnorm(q,0,sigma)
 eps = rep(NA,T)
 eps[1:q] = y[1:q] - alpha
 for(t in (q+1):T) {
-  y[t] = rnorm(1, mean = alpha + sum(theta*eps[(t-q):(t-1)]), sd = sigma)
-  eps[t] = y[t] - alpha - sum(theta*eps[(t-q):(t-1)])
+  y[t] = rnorm(1, mean = alpha + sum(theta * eps[(t-q):(t-1)]), sd = sigma)
+  eps[t] = y[t] - alpha - sum(theta * eps[(t-q):(t-1)])
 }
-plot(1:T,y,type='l')
+plot(1:T, y, type = 'l')
 
 # Jags code ---------------------------------------------------------------
 
