@@ -180,6 +180,17 @@ plot(forecast(my_model_ARIMA111,h=20))
 - You might have expected the forecasts to continue rising into the future due to the difference
 - The MA part of the model is obviously flat as previously discussed as there are no further errors to correct
 - The AR part of the model reverts back to the estimated mean of the last data point because the $\beta$ parameter is less than 1 - it dampens out the future predictions and stops them from going crazy
+- You can fix the model to produce better predictions by adding `include.drift=TRUE` to the ARIMA call
+
+## Better ARIMA model
+
+```{r, fig.height = 4}
+my_model_ARIMA111_dr = Arima(wheat$wheat, 
+                             order = c(1, 1, 1), 
+                             include.drift = TRUE)
+plot(forecast(my_model_ARIMA111_dr,h=20))
+```
+
 
 ## Summary
 

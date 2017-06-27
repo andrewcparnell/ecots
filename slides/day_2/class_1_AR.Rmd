@@ -218,7 +218,9 @@ pacf(y)
 
 Thus you can have a good initial guess at identifying $p$ in an AR(p) model from the ACF and PACF
 
-## Simulating from an AR(p) process {.smaller}
+## Simulating from an AR(p) process
+
+\small
 
 ```{r, echo=TRUE, fig.height = 3}
 set.seed(100)
@@ -269,7 +271,7 @@ $$\hat{y}_{t+2} = \hat{\alpha} + \hat{\beta} \hat{y}_{t+1}$$
 
     - stabilise the mean by removing the trend or seasonality (by e.g. using linear regression)
     - make the variance stable by performing a transformation such as log or Box-Cox
-    - Fit a more advanced non-stationary model (see later in the course)
+    - fit a more advanced non-stationary model (see later in the course)
     
 - Quite often, when a series is not mean or variance stationary, people will _difference_ the time series, and fit models only to the differences
 - You can also _seasonally difference_ the data
