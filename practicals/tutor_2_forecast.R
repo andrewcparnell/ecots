@@ -192,9 +192,8 @@ fit <- tslm(y ~ trend + season) # fit linear models to time series including tre
 plot(forecast(fit, h = 20))
 
 ##seasonal adjusted data is returned
-lines(seasadj(decompose(y, "additive")), col = "red")
-y_seasonal<-seasadj(decompose(y,"additive")) 
-
+y_seasonal<-seasadj(decompose(y,"additive"))  #removing seasonal component
+plot(y_seasonal)
 
 #------ Use a transformation: Box Cox
 #Transformations

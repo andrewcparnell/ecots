@@ -45,24 +45,27 @@ tsdisplay(Anomaly_diff) # AR models look similar to ARMA
 # Try AR(2)
 
 #4. Fit the model
-model1 <- Arima(hadcrut$Anomaly, order = c(2,1,0))  
-model1 #AIC = -263.18
+model1 <- Arima(hadcrut$Anomaly, order = c(2,1,0), include.drift = TRUE)  
+model1 #AIC = -262.57
 
 # require(lmtest) # Not a prerequisite but an extra two lines
 # coeftest(model1) # Check whether terms are relevant
 
 #Q5 Overfitting a model
 # Overfit in AR direction (Add extra AR terms)
-model2 =  Arima(hadcrut$Anomaly, order=c(3,1,0))
-model2  # AIC = -272.14 
+model2 =  Arima(hadcrut$Anomaly, order=c(3,1,0), include.drift = TRUE)
+model2  # AIC = -272.34
 
 # Overfit in AR direction (Add extra AR terms)
-model3 =  Arima(hadcrut$Anomaly, order = c(4,1,0))
-model3  # AIC = -270.28 
+model3 =  Arima(hadcrut$Anomaly, order = c(4,1,0), include.drift = TRUE)
+model3  # AIC = -270.62 
 
 # Overfit in MA direction
-model4 =  Arima(hadcrut$Anomaly, order = c(3,1,1))
-model4 # AIC = -271.09
+model4 =  Arima(hadcrut$Anomaly, order = c(3,1,1), include.drift = TRUE)
+model4 # AIC = -272.62 
+
+model5 =  Arima(hadcrut$Anomaly, order = c(3,1,2), include.drift = TRUE)
+model5 # AIC = -275.52
 
 # Comparing our model to an ARIMAX model
 auto.arima(hadcrut$Anomaly, xreg=hadcrut$Year)  #AIC = -272.03 
@@ -73,8 +76,8 @@ model2_new #AIC=-272.34
 # Best model is model 2
 
 #6. Check the residuals
-residuals <- model2$res 
-fit <- fitted(model2)
+residuals <- model4$res 
+fit <- fitted(model4)
 
 qqnorm(residuals)
 qqline(residuals) # Want points along line
@@ -82,22 +85,20 @@ acf(residuals)  # Check residuals don't correlate with themselves
 plot(fit, residuals) # Want random scatter
 hist(residuals) # Want normal distribution
 Box.test(residuals, type="Ljung", lag = 30)  # The null hypothesis for this test is that your model is a good fit.
-tsdiag(model2,gof.lag = 30) # Combines plots
-checkresiduals(model2) # Combines plots
+tsdiag(model4,gof.lag = 30) # Combines plots
+checkresiduals(model4) # Combines plots
 
 #7. Forecast into the future
-forecast(model2, h = 10)
-plot(forecast(model2 ,h = 10))
-
-# Compare our results to auto.arima
-auto.arima(hadcrut$Anomaly) # AIC = -274.32
+forecast(model4, h = 10)
+plot(forecast(model4 ,h = 10))
 
 # Holt-Winters or splines?
 forecast_spline <- splinef(hadcrut$Anomaly)
 summary(fcast)
 plot(fcast)
 holt <- ets(hadcrut$Anomaly) 
-forecast(holt, h=5)
+plot(forecast(holt, h=5))
+
 
 # ------- Second section: Lynx Dataset - Cyclic Pattern - Not fixed period
 
