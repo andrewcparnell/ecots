@@ -49,8 +49,8 @@ $$y_t = \mbox{trend}_t + \mbox{seasonality}_t + \mbox{error}_t$$
 
 ```{r, echo=FALSE}
 set.seed(123)
-x <- cumsum(sample(c(-1, 1), size=500, replace=TRUE))
-plot(x, type = 'l')
+y <- cumsum(sample(c(-1, 1), size=500, replace=TRUE))
+plot(y, type = 'l')
 ```
 
 ## Generating the series
