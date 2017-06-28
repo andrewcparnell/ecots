@@ -5,6 +5,9 @@ install.packages(c('R2jags',
                    'forecast'))
 
 rm(list=ls())
+require(forecast)
+require(R2jags)
+require(rjags)
 
 ## Tutorial lab 3 - Walkthrough examples of time series analysis
 
