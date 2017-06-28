@@ -4,23 +4,28 @@ install.packages(c('R2jags',
                    'tidyverse', 
                    'forecast'))
 
+rm(list=ls())
+
 ## Tutorial lab 3 - Walkthrough examples of time series analysis
 
+##############################
 #class_3_ARMA
+##############################
+
 #1. Plot the data and the ACF/PACF
 #2. Decide if the data look stationary or not. If not, perform a
-#suitable transformation and return to 1. If the data has a
-#strong trend or there is a high degree of autocorrelation
-#try 1 or 2 differences
+#   suitable transformation and return to 1. If the data has a
+#   strong trend or there is a high degree of autocorrelation
+#   try 1 or 2 differences
 #3. Guess at a suitable p and q for an ARMA(p, q) model
 #4. Fit the model
 #5. Try a few models around it by increasing/decreasing p and q
-#and checking the AIC (or others)
+#   and checking the AIC (or others)
 #6. Check the residuals
 #7. Forecast into the future
 
 # ----- First section: Time Series 1: Basic Example: 
-#------HadCRUT is the dataset of monthly instrumental temperature records
+# ----- HadCRUT is the dataset of monthly instrumental temperature records
 
 #1. Plot the data and the ACF/PACF
 hadcrut<-read.csv("hadcrut.csv") # HadCRUT is the dataset of monthly instrumental temperature records
@@ -38,10 +43,11 @@ tsdisplay(detrended_series) # Not trend-stationary
 
 ndiffs(hadcrut$Anomaly)
 Anomaly_diff<-diff(hadcrut$Anomaly)
-tsdisplay(Anomaly_diff)
 
 #3. Guess at a suitable p and q for an ARMA(p, q) model
 tsdisplay(Anomaly_diff) # AR models look similar to ARMA 
+acf(Anomaly_diff)
+Acf(Anomaly_diff)
 # Try AR(2)
 
 #4. Fit the model
@@ -68,16 +74,16 @@ model5 =  Arima(hadcrut$Anomaly, order = c(3,1,2), include.drift = TRUE)
 model5 # AIC = -275.52
 
 # Comparing our model to an ARIMAX model
+auto.arima(hadcrut$Anomaly, trace = TRUE)  # AIC = -274.32
 auto.arima(hadcrut$Anomaly, xreg=hadcrut$Year)  #AIC = -272.03 
-model2_new =  Arima(hadcrut$Anomaly, order = c(3,1,0), 
-                    xreg = hadcrut$Year) 
-model2_new #AIC=-272.34 
 
-# Best model is model 2
+# set auto.arima model as our model to use
+model_new =  Arima(hadcrut$Anomaly, order = c(2,1,1), include.drift = TRUE) 
+model_new #AIC=-272.34 
 
 #6. Check the residuals
-residuals <- model4$res 
-fit <- fitted(model4)
+residuals <- model_new$res 
+fit <- fitted(model_new)
 
 qqnorm(residuals)
 qqline(residuals) # Want points along line
@@ -85,20 +91,19 @@ acf(residuals)  # Check residuals don't correlate with themselves
 plot(fit, residuals) # Want random scatter
 hist(residuals) # Want normal distribution
 Box.test(residuals, type="Ljung", lag = 30)  # The null hypothesis for this test is that your model is a good fit.
-tsdiag(model4,gof.lag = 30) # Combines plots
-checkresiduals(model4) # Combines plots
+tsdiag(model_new, gof.lag = 30) # Combines plots
+checkresiduals(model_new) # Combines plots
 
 #7. Forecast into the future
-forecast(model4, h = 10)
-plot(forecast(model4 ,h = 10))
+forecast(model_new, h = 10)
+plot(forecast(model_new ,h = 10))
 
 # Holt-Winters or splines?
-forecast_spline <- splinef(hadcrut$Anomaly)
-summary(fcast)
-plot(fcast)
+forecast_spline <- splinef(hadcrut$Anomaly, h = 10)
+summary(forecast_spline)
+plot(forecast_spline)
 holt <- ets(hadcrut$Anomaly) 
-plot(forecast(holt, h=5))
-
+plot(forecast(holt, h = 10))
 
 # ------- Second section: Lynx Dataset - Cyclic Pattern - Not fixed period
 
@@ -111,37 +116,37 @@ tsdisplay(lynx$number) # from class_1_AR recognise repeating pattern in ACF
 # have issue with increasing mean - investigate non-stationarity
 
 # adf.test(lynx$number) (From the tseries package)
-auto.arima(lynx$number) # see if our answer matches the packages suggestion
 
 # Log transformation makes the peaks and troughs appear in the same pattern
 lynx_log <- log(lynx$number)
 tsdisplay(lynx_log)
+
+tsdisplay(diff(lynx$number)) # not great see PACF
+
 lambda <- BoxCox.lambda(lynx$number)
+lambda
+
+auto.arima(lynx$number) # see if our answer matches the packages suggestion
+auto.arima(lynx$number, lambda = lambda) #AIC = 408.93 
 
 # Ar fits am AR series based on AIC
 lynx.fit <- ar(BoxCox(lynx$number, lambda))
 plot(forecast(lynx.fit, h = 20, lambda = lambda))
 
+# model used in literature White Tong (1977)
+fit1 <- Arima(lynx$number, order = c(11,0,0), lambda = lambda) #Series is the original series
+fit1  #AIC = 394.57
+
+# Forecasting transformed data
+plot(forecast(fit1, h = 15)) 
+
 # Cross Fold Valifdation and forecast from neural network models
-modelcv <- CVar(lynx$number, k = 5, lambda = 0.15)  # Currently applies a neural network model
+modelcv <- CVar(lynx$number, k = 5, lambda = lambda)  # Currently applies a neural network model
 print(modelcv)
 print(modelcv$fold1)
 
-# model used in literature
-fit1<- Arima(lynx_log, order = c(11,0,0))  #White Tong (1977)
-fit1  #AIC=166.13
-
-fit2<- Arima(lynx_log,order=c(2,0,1))
-fit2 # AIC = 184.55 
-
-# Forecasting transformed data
-plot(forecast(fit1, h = 15)) # Uh-oh
-plot(forecast(fit1, h = 15, lambda = lambda))
-fit1<- Arima(lynx$number, order = c(11,0,0),lambda=0)
-plot(forecast(fit1, h = 15, lambda = lambda))
-
 # ------ Third Section: Seasonality example and comparing models using accuracy functions 
-data("nottem")
+data("nottem") # air temperatures around Nottingham castle
 
 # Start by getting a feel of the data and checking it's format
 head(nottem) #check format
@@ -161,11 +166,12 @@ autoplot(cbind(
 # Take some data for modelling - leave remainder for forecast comparison
 nott <- window(nottem, end = c(1936,12))
 
+fit1 <- auto.arima(nott, trace = TRUE)
 fit1 <- auto.arima(nott)
 fit1 # aic =1091.07
 
 tsdisplay(diff(nott,lag=12)) #never use more than one seasonal diff
- 
+
 # Use AIC to compare within ARIMA models
 fit2 <- arima(nott, order = c(0,0,1), list(order = c(0,1,1), period = 12)) # Seasonal lag is neg so try SMA
 fit2 # aic = 899.96
@@ -180,15 +186,19 @@ fit4 # aic = 892.66
 fit5 <- arima(nott, order = c(1,0,0), list(order = c(1,1,0), period = 12))
 fit5 # aic = 912.14
 
-tsdiag(fit4) # Check residuals
+tsdiag(fit3) # Check residuals
+tsdiag(fit4)
+qqnorm(fit4$residuals)
+qqline(fit4$residuals)
+qqnorm(fit3$residuals)
+qqline(fit3$residuals)
 
 #Forecast ahead by 36 places and then compare using MAPE, MSE etc.
-forecast_a <- forecast(fit4, h = 36)
+forecast_a <- forecast(fit3, h = 36)
 forecast_m <- meanf(nott, h = 36)
 forecast_rw <- rwf(nott, h = 36) 
 forecast_srw <- snaive(nott, h = 36) # Y[t]=Y[t-m] + Z(t) Z~Normal iid
 plot(forecast_a)
-accuracy(fit3)
 
 nott_for <- window(nottem, start = c(1937,1))
 
@@ -204,29 +214,27 @@ forecast_ets <- forecast(fit6, h = 36)
 
 # Could have dealt with seasonality by setting it as a covariate.....
 nott_ts <- ts(nott, frequency = 12,
-            start = c(1920, 1))
+              start = c(1920, 1))
 fit_cov <- tslm(nott_ts ~ trend + season)
 plot(forecast(fit_cov, h = 36))
 forecast_cov <- forecast(fit_cov, h = 36)
 
-#fit5 <- baggedETS(nott) # takes long time to run...
-
 fit6<-nnetar(nott, repeats = 20, maxit = 200)
 forecast_nn<-forecast(fit6, h = 36)
 
+# Which is best? 
 accuracy(forecast_a, nott_for)
 accuracy(forecast_ets, nott_for)
-accuracy(forecast_nn, nott_for) # Which is best? 
+accuracy(forecast_nn, nott_for) 
 accuracy(forecast_cov, nott_for)
 
-
 plot(forecast_ets)
+plot(forecast_cov)
 
 # Beware of artificial seasonality owing to months having different lengths
 
 # --------------- Fourth section: Quick Jags example 
 # --------------- Further detail on Jags tomorrow
-
 
 
 # Maths -------------------------------------------------------------------
@@ -251,6 +259,11 @@ plot(forecast_ets)
 # phi ~ dnorm(0,100) # If you're not fussed about stability
 # sigma ~ dunif(0,100)
 
+###############################
+# From course slides
+####################################
+
+
 # 1. Write some Stan or JAGS code which contains the likelihood and get the prior(s)
 # 2. Get your data into a list so that it matches the data names used in the Stan/JAGS code
 # 3. Run your model through Stan/JAGS
@@ -261,7 +274,8 @@ plot(forecast_ets)
 # Simulate data -----------------------------------------------------------
 
 # Some R code to simulate data from the above model
-# First AR1
+# First an AR(1)
+
 set.seed(123)
 T = 100
 t_seq = 1:T
@@ -284,7 +298,6 @@ model
   # Likelihood
   for (t in (p+1):T) {
   y[t] ~ dnorm(mu[t], tau)
-  y_pred[t] ~ dnorm(mu[t], sigma^-2)
   mu[t] <- alpha + inprod(phi, y[(t-p):(t-1)])
   }
   # Priors
@@ -306,7 +319,7 @@ model_parameters =  c("alpha","phi","sigma")
 # Run the model
 model_run = jags(data = model_data,
                  parameters.to.save = model_parameters,
-                 model.file=textConnection(model_code),
+                 model.file = textConnection(model_code),
                  n.chains = 4, # Number of different starting positions
                  n.iter = 1000, # Number of iterations
                  n.burnin = 200, # Number of iterations to remove at start
@@ -329,9 +342,9 @@ plot(post[,'alpha'], type="l")
 # Likelihood for an MA(q) model:
 # y_t ~ N(alpha + theta_1 ept_{t-1} + ... + theta_q eps_{t-q}, sigma)
 # Prior
-# alpha ~ normal(0,100) # Vague
-# sigma ~ uniform(0,10)
-# theta[q] ~ normal(0,100)
+# alpha ~ normal(0, 100) # Vague
+# sigma ~ uniform(0, 10)
+# theta[q] ~ normal(0, 100)
 
 # Simulate data -----------------------------------------------------------
 
@@ -343,8 +356,8 @@ alpha = 0
 set.seed(123)
 theta = runif(q)
 y = rep(NA,T)
-y[1:q] = rnorm(q,0,sigma)
-eps = rep(NA,T)
+y[1:q] = rnorm(q, 0, sigma)
+eps = rep(NA, T)
 eps[1:q] = y[1:q] - alpha
 for(t in (q+1):T) {
   y[t] = rnorm(1, mean = alpha + sum(theta * eps[(t-q):(t-1)]), sd = sigma)
@@ -382,7 +395,7 @@ model
 model_data = list(T = T, y = y, q = 1)
 
 # Choose the parameters to watch
-model_parameters =  c("alpha","theta","sigma")
+model_parameters =  c("alpha", "theta", "sigma")
 
 # Run the model
 model_run = jags(data = model_data,
@@ -394,3 +407,5 @@ model_run = jags(data = model_data,
                  n.thin = 2) # Amount of thinning
 
 print(model_run) # Parameter theta should match the true value
+
+# could you expand this code for an AR(2) and an MA(2)?
