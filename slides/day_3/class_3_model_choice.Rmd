@@ -86,13 +86,13 @@ model
 {
   ...
   # Likelihood
-  for (t in (q+1):N) {
-    y[t] ~ dnorm(alpha + ar_mean[t] + ma_mean[t] + reg_mean[t],
+  for (t in (max(p,q)+1):N) {
+    z[t] ~ dnorm(alpha + ar_mean[t] + ma_mean[t] + reg_mean[t],
                   sigma^-2)
     ma_mean[t] <- inprod(theta, eps[(t-q):(t-1)])
-    ar_mean[t] <- inprod(beta, y[(t-p):(t-1)])
+    ar_mean[t] <- inprod(beta, z[(t-p):(t-1)])
     reg_mean[t] <- inprod(phi, x[t,])
-    eps[t] <- y[t]-alpha-ar_mean[t]-ma_mean[t]-reg_mean[t]
+    eps[t] <- z[t]-alpha-ar_mean[t]-ma_mean[t]-reg_mean[t]
   }
   # Priors
   ...
@@ -288,7 +288,7 @@ apply(y_pred,2,'quantile', c(0.05, 0.95))[,48:57]
 
 ## Choosing different models: DIC
 
-- So far we have met a wide array of discrete-time time series models, all of which involve choose a $p$ (AR component), a $q$ (MA component), and a $d$ (differencing component)
+- So far we have met a wide array of discrete-time time series models, all of which involve choosing a $p$ (AR component), a $q$ (MA component), and a $d$ (differencing component)
 
 - We need a principled method to choose the best values of these. It will always be the case that increasing these values will lead to a better fit
 

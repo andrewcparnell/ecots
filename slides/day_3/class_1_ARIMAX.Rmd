@@ -43,7 +43,7 @@ where we now include $r$ possible explanatory variables with coefficients $\phi_
 
 There are two key things to be wary of when using this type of ARIMAX model:
 
-1. It's hard to interpret the $\phi$ values. It is not the case (as in normal regression) that an increase of 1 unit in $x$ will lead to an increase of $\phi$ in $y$ because of all the AR terms. 
+1. It's hard to interpret the $\phi$ values. It is not the case (as in normal regression) that an increase of 1 unit in $x$ will lead to an increase of $\phi$ in $y$ because of all the AR terms
 2. If you are differencing the data before running the model, you also need to difference the explanatory variables
 
 If you're just interested in forecasting then the problem in 1 goes away, but if you are interested in the causation of $x$ on $y$ you can fit the regression model separately or try a dynamic regression model (see later in course)
@@ -116,7 +116,7 @@ where $n$ is the number of data points (after differencing)
 
 - These information criteria all work by adding on a function of the number of parameters to the deviance, designed to approximate some performance criterion
 
-- AIC was invented to match leave-one-out cross validation error (more on this later). BIC to match the probability of the data given the model
+- AIC was invented to match leave-one-out cross validation error (more on this later). BIC to match the probability of the model given the data
 
 - The version JAGS uses is known as the Deviance Information Criterion (DIC) and is built specifically to penalise the deviance by the _effective_ number of parameters, which it calls $p_D$
 
@@ -132,7 +132,7 @@ where $n$ is the number of data points (after differencing)
 
 ## Leave none out cross validation
 
-- We can get a cheat version of LOO-CV by just using the fitted values from the ARIMA model fit. 
+- We can get a cheat version of LOO-CV by just using the fitted values from the ARIMA model fit 
 
 - The `Arima` function stores the one step ahead forecasts in the object `fitted`:
 
@@ -156,7 +156,7 @@ accuracy(my_model_ARIMAX111)
 
 - The `forecast` package has a function called `CVar` which implements leave one out cross validation. However it only works for AR models - not full ARIMA ones
 
-- If you want to do ARIMA LOO-CV (sometimes called rolling-origin forecasting) you have to write it yourself.
+- If you want to do ARIMA LOO-CV (sometimes called rolling-origin forecasting) you have to write it yourself
 
 \begin{center}
 \includegraphics[width = 7cm]{cv_pic.png}
