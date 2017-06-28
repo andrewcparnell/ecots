@@ -243,20 +243,20 @@ plot(forecast_cov)
 # Notation:
 # y(t) = response variable at time t, t = 1,...,T
 # alpha = overall mean parameter
-# phi = autocorrelation/autoregressive (AR) parameter
-# phi_j = Some of the models below have multiple AR parameters, j = 1,..P
+# beta = autocorrelation/autoregressive (AR) parameter
+# beta_j = Some of the models below have multiple AR parameters, j = 1,..P
 # sigma = residual standard deviation
 
 # Likelihood
 # For AR(1)
-# y[t] ~ normal(alpha + phi * y[t-1], sigma^2) # See AR/ARMA/MA etc. course notes
+# y[t] ~ normal(alpha + beta * y[t-1], sigma^2) # See AR/ARMA/MA etc. course notes
 # For AR(p)
-# y[t] ~ normal(alpha + phi[1] * y[t-1] + ... + phi[p] * y[y-p], sigma^2)
+# y[t] ~ normal(alpha + beta[1] * y[t-1] + ... + beta[p] * y[y-p], sigma^2)
 
 # Priors
 # alpha ~ dnorm(0,100)
-# phi ~ dunif(-1,1) # If you want the process to be stable/stationary
-# phi ~ dnorm(0,100) # If you're not fussed about stability
+# beta ~ dunif(-1,1) # If you want the process to be stable/stationary
+# beta ~ dnorm(0,100) # If you're not fussed about stability
 # sigma ~ dunif(0,100)
 
 ###############################
@@ -281,10 +281,10 @@ T = 100
 t_seq = 1:T
 sigma = 1
 alpha = 1    
-phi = 0.6    # Constrain phi to (-1,1) so the series doesn't explode
+beta = 0.6    # Constrain beta to (-1,1) so the series doesn't explode
 y = rep(NA,T)
 y[1] = rnorm(1,0,sigma)
-for(t in 2:T) y[t] = rnorm(1, alpha + phi * y[t-1], sigma)
+for(t in 2:T) y[t] = rnorm(1, alpha + beta * y[t-1], sigma)
 # plot
 plot(t_seq, y, type='l')
 
@@ -298,12 +298,12 @@ model
   # Likelihood
   for (t in (p+1):T) {
   y[t] ~ dnorm(mu[t], tau)
-  mu[t] <- alpha + inprod(phi, y[(t-p):(t-1)])
+  mu[t] <- alpha + inprod(beta, y[(t-p):(t-1)])
   }
   # Priors
   alpha ~ dnorm(0.0,0.01)
   for (i in 1:p) {
-  phi[i] ~ dnorm(0.0,0.01)
+  beta[i] ~ dnorm(0.0,0.01)
   }
   tau <- 1/pow(sigma,2) # Turn precision into standard deviation
   sigma ~ dunif(0.0,10.0)
@@ -314,7 +314,7 @@ model
 model_data = list(T = T, y = y, p = 1)
 
 # Choose the parameters to watch
-model_parameters =  c("alpha","phi","sigma")
+model_parameters =  c("alpha","beta","sigma")
 
 # Run the model
 model_run = jags(data = model_data,
@@ -331,6 +331,7 @@ print(model_run)
 
 post = model_run$BUGSoutput$sims.matrix
 head(post)
+cor(post[,1],post[,'beta'])
 plot(post[,'alpha'], type="l")
 
 #---------------------- Moving Average example 
