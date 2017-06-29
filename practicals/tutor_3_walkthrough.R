@@ -81,8 +81,8 @@ auto.arima(hadcrut$Anomaly, trace = TRUE)  # AIC = -274.32
 auto.arima(hadcrut$Anomaly, xreg=hadcrut$Year)  #AIC = -272.03 
 
 # set auto.arima model as our model to use
-model_new =  Arima(hadcrut$Anomaly, order = c(2,1,1), include.drift = TRUE) 
-model_new #AIC=-272.34 
+model_new =  Arima(hadcrut$Anomaly, order = c(2,1,2), include.drift = TRUE) 
+model_new #AIC = -274.32
 
 #6. Check the residuals
 residuals <- model_new$res 
@@ -118,8 +118,6 @@ with(lynx, plot(year , number, type ='l'))
 tsdisplay(lynx$number) # from class_1_AR recognise repeating pattern in ACF
 # have issue with increasing mean - investigate non-stationarity
 
-# adf.test(lynx$number) (From the tseries package)
-
 # Log transformation makes the peaks and troughs appear in the same pattern
 lynx_log <- log(lynx$number)
 tsdisplay(lynx_log)
@@ -129,8 +127,8 @@ tsdisplay(diff(lynx$number)) # not great see PACF
 lambda <- BoxCox.lambda(lynx$number)
 lambda
 
-auto.arima(lynx$number) # see if our answer matches the packages suggestion
-auto.arima(lynx$number, lambda = lambda) #AIC = 408.93 
+# auto.arima(lynx$number) # see if our answer matches the packages suggestion
+auto.arima(lynx$number, lambda = lambda, trace = TRUE) #AIC = 408.93 
 
 # Ar fits am AR series based on AIC
 lynx.fit <- ar(BoxCox(lynx$number, lambda))
@@ -143,7 +141,7 @@ fit1  #AIC = 394.57
 # Forecasting transformed data
 plot(forecast(fit1, h = 15)) 
 
-# Cross Fold Valifdation and forecast from neural network models
+# Cross Fold Validation and forecast from neural network models
 modelcv <- CVar(lynx$number, k = 5, lambda = lambda)  # Currently applies a neural network model
 print(modelcv)
 print(modelcv$fold1)
@@ -173,7 +171,7 @@ fit1 <- auto.arima(nott, trace = TRUE)
 fit1 <- auto.arima(nott)
 fit1 # aic =1091.07
 
-tsdisplay(diff(nott,lag=12)) #never use more than one seasonal diff
+tsdisplay(diff(nott, lag=12)) #never use more than one seasonal diff
 
 # Use AIC to compare within ARIMA models
 fit2 <- arima(nott, order = c(0,0,1), list(order = c(0,1,1), period = 12)) # Seasonal lag is neg so try SMA
@@ -197,9 +195,9 @@ qqnorm(fit3$residuals)
 qqline(fit3$residuals)
 
 #Forecast ahead by 36 places and then compare using MAPE, MSE etc.
-forecast_a <- forecast(fit3, h = 36)
-forecast_m <- meanf(nott, h = 36)
-forecast_rw <- rwf(nott, h = 36) 
+forecast_a <- forecast(fit3, h = 36) # arima forecast
+forecast_m <- meanf(nott, h = 36) # mean of data
+forecast_rw <- rwf(nott, h = 36)  # random walk
 forecast_srw <- snaive(nott, h = 36) # Y[t]=Y[t-m] + Z(t) Z~Normal iid
 plot(forecast_a)
 
@@ -388,7 +386,7 @@ model
   # Priors
   alpha ~ dnorm(0.0,0.01)
   for (i in 1:q) {
-  theta[i] ~ dnorm(0.0,0.01)
+  theta[i] ~ dnorm(0.5,0.1)
   }
   tau <- 1/pow(sigma,2) # Turn precision into standard deviation
   sigma ~ dunif(0.0,10.0)

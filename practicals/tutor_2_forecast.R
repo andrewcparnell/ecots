@@ -125,7 +125,8 @@ dates4
 range(dates3)
 
 # Changing format
-as.Date(dates3, format = "%m/%d/%Y")
+#as.Date(dates3, format = "%m/%d/%Y")
+format(dates3, "%d/%m/%Y")
 
 # Calling the current time
 Sys.time()
