@@ -152,7 +152,7 @@ parameters {
   real<lower=0> sigma_h; # SVM residual SD
 }
 model {
-  h[1] ~ normal(alpha_h, 0.01);
+  h[1] ~ normal(alpha_h, 1);
   for (t in 2:N) {
     y[t] ~ normal(alpha + beta * y[t-1], sqrt(exp(h[t])));
     h[t] ~ normal(alpha_h + beta_h * h[t-1], sigma_h);

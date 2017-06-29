@@ -62,7 +62,7 @@ model
   for (t in 1:T) {
     y[t] ~ dnorm(alpha, sigma[t]^-2)
   }
-  sigma[1] ~ dunif(0, 3)
+  sigma[1] ~ dunif(0, 1)
   for(t in 2:T) {
     sigma[t] <- sqrt(gamma_1 + gamma_2 * pow(y[t-1] - alpha, 2))
   }
@@ -125,7 +125,7 @@ lines(1919:1988, upp[-1], col = 'red', lty = 2)
 - The Generalised ARCH model works by simply adding the previous value of the variance, as well as the previous value of the observation
 - The GARCH(1,1) model thus has:
 $$\sigma_t^2 = \gamma_1 + \gamma_2 (y_{t-1} - \alpha)^2 + \gamma_3 \sigma_{t-1}^2$$
-- Strictly speaking $\gamma_1 + \gamma_2 < 1$ though like the stationarity conditions in ARIMA models we can relax this assumption and see if the data support it
+- There are, as always, complicated restrictions on the parameters, though like the stationarity conditions in ARIMA models we can relax this assumption and see if the data support it
 - It's conceptually easy to extend to general GARCH(p,q) models which add in extra previous lags
 
 ## Example of using the GARCH(1,1) model
@@ -140,7 +140,7 @@ model
   for (t in 1:T) {
     y[t] ~ dnorm(alpha, sigma[t]^-2)
   }
-  sigma[1] ~ dunif(0,10)
+  sigma[1] ~ dunif(0,1)
   for(t in 2:T) {
     sigma[t] <- sqrt(gamma_1 + gamma_2 * pow(y[t-1] - alpha, 2) 
                         + gamma_3 * pow(sigma[t-1], 2))
@@ -210,7 +210,7 @@ with(r_2, print(c(DIC, pD)))
 - SVMs, ARCH and GARCH are all closely linked if you go into the bowels of the theory
 - The general model structure is often written as:
 $$y_t \sim N( \alpha, \exp( h_t ) )$$
-$$h_t \sim N( \mu + \phi ( h_{t-1} - \mu), \sigma^2)$$
+$$h_t \sim N( \mu + \phi h_{t-1}, \sigma^2)$$
 - You can think of an SVM being like a GLM but with a log link on the variance parameter
 
 ## JAGS code for the SVM model
@@ -228,7 +228,7 @@ model
   }
   h[1] <- mu
   for(t in 2:T) {
-    h[t] ~ dnorm(mu + phi * (h[t-1] - mu), sigma^-2)
+    h[t] ~ dnorm(mu + phi * h[t-1], sigma^-2)
   }
 
   # Priors
