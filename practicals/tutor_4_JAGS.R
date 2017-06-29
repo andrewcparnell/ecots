@@ -149,7 +149,7 @@ abline(h=theta, col="red", lwd=2)
 # Real example ------------------------------------------------------------
 
 # Data wrangling and jags code to run the model on a real data set in the data directory
-hadcrut = read.csv('hadcrut.csv')
+hadcrut = read.csv('hadcrut.csv') #hadcrut = read.csv('https://raw.githubusercontent.com/andrewcparnell/tsme_course/master/data/hadcrut.csv')
 head(hadcrut)
 dim(hadcrut)
 
@@ -166,7 +166,7 @@ par(mfrow=c(1,2))
 acf(hadcrut2)
 pacf(hadcrut2)
 par(mfrow=c(1,1))
-# Suggests ARIMA(3,1,3)
+# Try ARIMA(3,1,3)?
 
 # Set up the data
 d = 1
@@ -200,14 +200,14 @@ phi_mean = apply(post$phi,2,'mean')
 
 # Create fitted values
 z = diff(hadcrut$Anomaly, differences = d)
-eps_fit = z_fit = rep(NA,real_data$T)
+eps_fit = z_fit = rep(NA,real_data$T) # Create holder
 eps_fit[1:real_data$q] = z[1:real_data$q] - alpha_mean
 z_fit[1:real_data$q] = alpha_mean
 for (t in (real_data$q+1):real_data$T) {
   ar_mean = sum( phi_mean * z[(t-real_data$p):(t-1)] )
   ma_mean = sum( theta_mean * eps_fit[(t-real_data$q):(t-1)] )
   eps_fit[t] = z[t] - alpha_mean - ma_mean - ar_mean
-  z_fit[t] = alpha_mean + ma_mean + ar_mean
+  z_fit[t] = alpha_mean + ma_mean + ar_mean # No sigma term here - fitted value
 }
 
 # Create fitted lines - note that the z_fit values are one step ahead
@@ -225,8 +225,8 @@ real_data_future = with(hadcrut,
                              z = c(diff(hadcrut$Anomaly,
                                         differences = d),
                                    rep(NA,T_future)),
-                             q = 1,
-                             p = 1))
+                             q = 3,
+                             p = 3))
 
 # Just watch y now
 model_parameters =  c("z")
@@ -257,25 +257,6 @@ plot(year_all,
      type='n')
 lines(year_all,y_all_mean,col='red')
 with(hadcrut,lines(Year,Anomaly))
-
-# Things to try: -------------------------------------------------------------
-
-# 1) Calculate the estimated residuals from a simpler AIMRA(1,0,1) fit and plot them.
-# Just like a linear regression they should form a random pattern
-# and be approx normally distributed.
-# Check whether this is so using hist, qqplot, and acf
-# 2) If you look at the fits for the ARIMA(1,0,1) model you'll
-# see that phi is approximately 1.
-# Try creating a model instead which is ARIMA(0,1,1) - this is a moving
-# average model on the differences (go back to the jags_moving_average code to fit this model).
-# Do the fits look any different?
-# 3) (harder) Try experimenting with the order of the
-# random walk and look at the effect on the fits.
-# Try changing the length of future predictions or
-# adding in confidence intervals (Hint: see the code in the
-# jags_linear_regression file for how to produce confidence intervals
-# from the output; it involves changing the all to apply in the lines above)
-
 
 #####################################################################
 # 2. Jags: AutoRegressive Conditional Heteroskesticity (ARCH) models
@@ -354,7 +335,7 @@ model
 model_data = list(T = T, y = y)
 
 # Choose the parameters to watch
-model_parameters =  c("gamma_0","gamma_1","alpha")
+model_parameters =  c("sigma", "gamma_0","gamma_1","alpha")
 
 # Run the model
 model_run = jags(data = model_data,
@@ -399,17 +380,17 @@ abline(h=gamma_1, col="red", lwd=2)
 # Real example ------------------------------------------------------------
 
 # Run the ARCH(1) model on the ice core data set
-ice = read.csv('GISP2_20yr.csv')
+ice = read.csv('GISP2_20yr.csv') #ice = read.csv('https://raw.githubusercontent.com/andrewcparnell/tsme_course/master/data/GISP2_20yr.csv')
 head(ice)
 dim(ice)
 
 with(ice, plot(Age, Del.18O,type='l'))
 
 # Try plots of differences
-with(ice, plot(Age[-1],diff(Del.18O,differences=1), type='l')) # Still has changing variability
+with(ice, plot(Age[-1],diff(Del.18O,differences=1), type='l')) # Still has heteroskedasticity
 with(ice, plot(Age[-(1:2)],diff(Del.18O,differences=2), type='l'))
 
-# Try this on the last 30k years
+# Look at the last 30k years:
 ice2 = subset(ice,Age>=10000 & Age<=25000)
 table(diff(ice2$Age))
 with(ice2,plot(Age[-1],diff(Del.18O),type='l'))
@@ -449,7 +430,7 @@ lines(ice2$Age[-1],sigma_low,lty='dotted')
 lines(ice2$Age[-1],sigma_high,lty='dotted')
 # Some periods of high heteroskesdasticity
 
-# Things to try: -------------------------------------------------------------
+# Things to try at home: -------------------------------------------------------------
 
 # 1) Try playing with the values of gamma_0 and gamma_1 in the simulated data above.
 # See if you can create some really crazy patterns (e.g. try gamma_1>1)
@@ -458,22 +439,24 @@ lines(ice2$Age[-1],sigma_high,lty='dotted')
 # 3) (harder) The above model is only an ARCH(1) model.
 # See if you can simulate from and then fit an ARCH(2) version.
 
-
-
-
-
-
-
-
-
+--------------------------------------------------------------------------------------
+  
+  #####################################################################
+#####################################################################
+# Stan resources:
+# An overview: http://mlss2014.hiit.fi/mlss_files/2-stan.pdf
+# A very good tutorial: https://cran.r-project.org/web/packages/rstan/vignettes/rstan.html
+# A comprehensive manual (most recent at the first link on this page):
+# http://mc-stan.org/users/documentation/
+# Overview of Stan...built to overcome deficiencies in Jags
+# Python, command line, Rstan... MatlabStan, STATAStan, MathematicaStan (not supported)
+# 624-page document - look at 22, 23... lots of examples through the manual
+#####################################################################
+#####################################################################
 
 #####################################################################
 # 3. Stan: AutoRegressive Integrated Moving Average (ARMA) models
 #####################################################################
-
-# Overview of Stan...built to overcome deficiencies in Jags
-# Python, command line, Rstan... MatlabStan, STATAStan, MathematicaStan (not supported)
-# 621-page document - look at 22, 23... lots of examples in it
 
 # ARIMA (AutoRegressive Integrated Moving Average) fit in Stan
 
@@ -598,15 +581,15 @@ pairs(model_fit, pars = c("alpha", "phi", "theta", "sigma"), las = 1)
 
 # Each off-diagonal square represents a bivariate distribution of the draws
 # for the intersection of the row-variable and the column-variable.
-# Ideally, the below-diagonal intersection and the above-diagonal intersection
-# of the same two variables should have distributions that are mirror images of each other.
-# Any yellow points would indicate transitions where the maximum treedepth__ was hit,
-# and red points indicate a divergent transition.
 
-# Exercise: apply this to the HADcrut data (as already done with Jags)
+# Things to try at home: -------------------------------------------------------------
 
+# Apply this model to the HADcrut data (as already done with Jags)
+# Compare the Jags and Stan output
 
-#####################################################################
+--------------------------------------------------------------------------------------
+  
+  #####################################################################
 # 4. Jags: AutoRegressive Conditional Heteroskesticity (ARCH) models
 #####################################################################
 
@@ -716,15 +699,11 @@ pairs(model_fit, pars = c("alpha", "gamma_0", "gamma_1"), las = 1)
 
 # Each off-diagonal square represents a bivariate distribution of the draws
 # for the intersection of the row-variable and the column-variable.
-# Ideally, the below-diagonal intersection and the above-diagonal intersection
-# of the same two variables should have distributions that are mirror images of each other.
-# Any yellow points would indicate transitions where the maximum treedepth__ was hit,
-# and red points indicate a divergent transition.
 
 # Real example ------------------------------------------------------------
 
 # Run the ARCH(1) model on the ice core data set
-ice = read.csv('GISP2_20yr.csv')
+ice = read.csv('GISP2_20yr.csv') #ice = read.csv('https://raw.githubusercontent.com/andrewcparnell/tsme_course/master/data/GISP2_20yr.csv')
 head(ice)
 dim(ice)
 
@@ -772,14 +751,14 @@ rstan::traceplot(model_fit, pars = "gamma_1", inc_warmup = TRUE)
 burnin = 1000
 total = length(model_fit@sim$samples[[1]]$gamma_0)
 
-sample_gamma_0 = model_fit@sim$samples[[1]]$gamma_0[(burnin+1):total] # 2000 samples
+sample_gamma_0 = model_fit@sim$samples[[1]]$gamma_0[(burnin+1):total] # 1000 samples (should probably thin)
 sample_gamma_1 = model_fit@sim$samples[[1]]$gamma_1[(burnin+1):total]
 sample_alpha = model_fit@sim$samples[[1]]$alpha[(burnin+1):total]
 y = diff(ice2$Del.18O)
 
 # Getting estimates of sigma from the second value onwards:
 sigma = matrix(nrow=length(y), ncol=total-burnin)
-sigma[1,] = 0
+sigma[1,] = 1
 
 for (i in 2:length(y)) {
   # Calculate estimates of sigma, for each value of t:
