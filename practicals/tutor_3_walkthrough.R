@@ -300,6 +300,7 @@ model
   for (t in (p+1):T) {
   y[t] ~ dnorm(mu[t], tau)
   mu[t] <- alpha + inprod(beta, y[(t-p):(t-1)])
+  log_lik[i] <- logdensity.norm(y[t], mu[t], tau)
   }
   # Priors
   alpha ~ dnorm(0.0,0.01)
