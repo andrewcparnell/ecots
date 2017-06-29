@@ -11,12 +11,11 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-#setwd("~/GitHub/ecots/slides/day_4")
-setwd('/Volumes/MacintoshHD2/GitHub/ecots/slides/day_4/')
+setwd("~/GitHub/ecots/slides/day_4")
+#setwd('/Volumes/MacintoshHD2/GitHub/ecots/slides/day_4/')
 options(width = 50)
 pkgs = c('R2jags','rjags', 'lubridate', 'tidyverse','forecast', 'rstan')
 lapply(pkgs, library, character.only = TRUE)
-library(latex2exp)
 ```
 
 ## Learning outcomes
@@ -37,7 +36,7 @@ library(latex2exp)
 
 - The latter are much more interesting. The ACF and PACF can help, but we can usually do much better by creating a _power spectrum_
 
-## An example seasonal series
+## An example seasonal series
 
 ```{r, fig.height = 4}
 CO2 = read.csv(file = '../../data/CO2.csv', 
@@ -50,7 +49,7 @@ with(CO2_1990, plot(date, CO2_ppm, type = 'l',
                     xlab = 'Year'), las = 1)
 ```
 
-## ACF and PACF
+## ACF and PACF
 
 ```{r, fig.height = 6}
 par(mfrow = c(1, 2))
@@ -58,7 +57,7 @@ acf(CO2_1990$CO2_ppm)
 pacf(CO2_1990$CO2_ppm)
 ```
 
-## Seasonal time series 1: including seasonality as a covariate
+## Seasonal time series 1: including seasonality as a covariate
 
 - The simplest way is to include month as a covariate in a regression type model
 
@@ -78,7 +77,7 @@ s_model_1 = tslm(CO2_ts ~ trend + season)
 plot(forecast(s_model_1, h = 24))
 ```
 
-## What is the time series model doing here?
+## What is the time series model doing here?
 
 - This is just a regression model, so that:
 $$y_t = \alpha + \beta_t \mbox{year}_t + \gamma_{1t} \mbox{Feb}_t + \gamma_{2t} \mbox{Mar}_t + \ldots + \gamma_{11,t} \mbox{Dec}_t + \epsilon_t$$
@@ -108,20 +107,25 @@ acf(CO2_diff, na.action = na.pass)
 pacf(CO2_diff, na.action = na.pass)
 ```
 
-## Fit an ARIMA model to seasonal diffence
+## Fit an ARIMA model with a seasonal difference
 
 ```{r}
-Arima(CO2_diff, order = c(1, 0, 0))
+CO2_1990_ts = ts(CO2_1990$CO2_ppm, frequency = 12, 
+                 start =c(1990, 1))
+Arima(CO2_1990_ts, order = c(1, 0, 0), 
+      seasonal = c(0, 1, 0),
+      include.drift = TRUE)
 ```
 
-## Forecasts from seasonally differenced series
+## Forecasts from seasonally differenced series
 
 ```{r, fig.height = 5}
-s_model_2 = Arima(CO2_diff, order = c(1, 0, 0))
+s_model_2 = Arima(CO2_1990_ts, order = c(1, 0, 0), 
+                  seasonal = c(0, 1, 0), include.drift = TRUE)
 plot(forecast(s_model_2, h = 24))
 ```
 
-- Fiddly to back transform and not very helpful forecast
+- Pretty good. Might be able to do better with some richer models
 
 ## A full seasonal arima model
 
@@ -133,22 +137,22 @@ $$\mbox{diff}^d(y_t)= \mbox{constant} + \mbox{AR terms} + \mbox{MA terms} + \mbo
 - For example:
 $$y_t - y_{t-12} = \alpha + \beta y_{t-1} + \gamma y_{t-12} + \epsilon_t$$
 
-- This is a sARIMA$(1,0,0)(1,0,0)_{12}$ model
+- This is a sARIMA$(1,0,0)(1,1,0)_{12}$ model
 
 ## Fitting sARIMA models in `forecast`
 
 ```{r}
-auto.arima(CO2_ts)
+auto.arima(CO2_1990_ts)
 ```
 
 ## Plotting forecasts
 
 ```{r, fig.height = 6}
-s_model_3 = auto.arima(CO2_ts)
+s_model_3 = auto.arima(CO2_1990_ts)
 plot(forecast(s_model_3, h = 24))
 ```
 
-## A simple sARIMA model with JAGS
+## A simple sARIMA model with JAGS
 
 ```{r}
 model_code = '
@@ -169,7 +173,7 @@ model
 '
 ```
 
-## Fitting a sARIMA$(1,0,0)(1,0,0)_{12}$ model in JAGS
+## Fitting a sARIMA$(1,0,0)(1,0,0)_{12}$ model in JAGS
 
 \tiny 
 
