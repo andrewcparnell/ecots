@@ -566,7 +566,6 @@ model_fit = stan(
   chains = 4,             # number of Markov chains
   warmup = 1000,          # number of warmup iterations per chain
   iter = 2000,            # total number of iterations per chain
-  cores = 2,              # number of cores
   refresh = 1000,
   model_code = stan_code # show progress every 'refresh' iterations
 )
@@ -639,7 +638,7 @@ library(rstan)
 # Priors
 # gamma_0 ~ unif(0,10) - needs to be positive
 # gamma_1 ~ unif(0,1) - ditto, and usually <1 too
-# alpha ~ N(0,100) - vague
+# alpha - a real number - vague
 
 # Simulate data -----------------------------------------------------------
 
@@ -668,8 +667,8 @@ real y[T]; // return at time t
 }
 parameters {
 real alpha; // average return
-real<lower=0> gamma_0; // noise intercept
-real<lower=0,upper=1> gamma_1; // noise slope
+real<lower=0, upper=10> gamma_0; // noise intercept
+real<lower=0, upper=1> gamma_1; // noise slope
 }
 model {
 for (t in 2:T)
@@ -686,7 +685,6 @@ model_fit = stan(
   chains = 4,             # number of Markov chains
   warmup = 1000,          # number of warmup iterations per chain
   iter = 2000,            # total number of iterations per chain
-  cores = 2,              # number of cores
   refresh = 1000,
   model_code = stan_code # show progress every 'refresh' iterations
 )
@@ -752,7 +750,6 @@ real_fit = stan(
   chains = 4,             # number of Markov chains
   warmup = 1000,          # number of warmup iterations per chain
   iter = 2000,            # total number of iterations per chain
-  cores = 2,              # number of cores
   refresh = 1000,
   model_code = stan_code # show progress every 'refresh' iterations
 )
@@ -771,28 +768,32 @@ rstan::traceplot(model_fit, pars = "alpha", inc_warmup = TRUE)
 rstan::traceplot(model_fit, pars = "gamma_0", inc_warmup = TRUE)
 rstan::traceplot(model_fit, pars = "gamma_1", inc_warmup = TRUE)
 
-# Plot the sigma outputs
-sample_gamma_0 = model_fit@sim$samples[[1]]$gamma_0 # 2000 samples
-sample_gamma_1 = model_fit@sim$samples[[1]]$gamma_1
-sample_alpha = model_fit@sim$samples[[1]]$alpha
+### Plot the sigma outputs using posterior samples:
+burnin = 1000
+total = length(model_fit@sim$samples[[1]]$gamma_0)
+
+sample_gamma_0 = model_fit@sim$samples[[1]]$gamma_0[(burnin+1):total] # 2000 samples
+sample_gamma_1 = model_fit@sim$samples[[1]]$gamma_1[(burnin+1):total]
+sample_alpha = model_fit@sim$samples[[1]]$alpha[(burnin+1):total]
 y = diff(ice2$Del.18O)
 
 # Getting estimates of sigma from the second value onwards:
-sigma = matrix(nrow=length(y), ncol=2000)
+sigma = matrix(nrow=length(y), ncol=total-burnin)
 sigma[1,] = 0
 
 for (i in 2:length(y)) {
-  
-  # Calculate 2000 estimates of sigma:
-  sigma[i,] = sample_gamma_0 + sample_gamma_1 * (y[i-1] - sample_alpha)^2
+  # Calculate estimates of sigma, for each value of t:
+  sigma[i,] = sqrt(sample_gamma_0 + sample_gamma_1 * (y[i-1] - sample_alpha)^2)
   
 }
 
+# Get the quantiles (specific to each value of t)
 sigma_med = apply(sigma, 1, 'quantile',0.5)
 sigma_low = apply(sigma, 1,'quantile',0.025)
 sigma_high = apply(sigma, 1,'quantile',0.975)
 
-plot(ice2$Age[-1],sigma_med,type='l',ylim=range(c(sigma_low[-1],sigma_high[-1])))
-lines(ice2$Age[-1],sigma_low,lty='dotted')
-lines(ice2$Age[-1],sigma_high,lty='dotted')
+# Plot the median, low and high:
+plot(ice2$Age[-1], sigma_med,type='l',ylim=range(c(sigma_low[-1],sigma_high[-1])))
+lines(ice2$Age[-1], sigma_low,lty='dotted')
+lines(ice2$Age[-1], sigma_high,lty='dotted')
 # Some periods of high heteroskesdasticity

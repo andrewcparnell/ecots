@@ -60,7 +60,7 @@ qqline(mod_2$residuals) # All good but one dodgy observation!
 hist(mod_2$residuals, breaks = 30)
 
 # 5. Identify the one strange observation and see if you can work out what happened that day
-airquality[which.min(mod_2$residuals),]
+airquality[as.integer(names(which.min(mod_2$residuals))),]
 # Compare with summary(airquality) - average Ozone value, but very high Solar.R, low temperature
 
 # 6. You can get the AIC of this model with e.g. AIC(my_model). Try some more models and see if you can get a better fit. Some ideas might include: interactions between terms (e.g. include + Wind*Temp), quadratic functions (e.g. include + I(Wind^2)), and changing month and day to be factor rather than numerical variables. 
