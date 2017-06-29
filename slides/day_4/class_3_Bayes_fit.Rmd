@@ -92,7 +92,7 @@ model {
 }'
 ```
 
-## Reminder: wheat data
+## Reminder: Forest fire data
 
 ```{r, fig.height = 6}
 ff = read.csv('../../data/forest_fires.csv')
@@ -282,7 +282,7 @@ lines(1:365, mu_post[,3], col = 'red', lty = 2)
 
 - There is an associated package with Stan called `loo` which creates a new and interesting model comparison statistic called WAIC
 
-- WAIC is just like AIC, BIC, DIC, etc, except that it also provides a measure of uncertainty
+- WAIC is just like AIC, BIC, DIC, etc., except that it also provides a measure of uncertainty
 
 - To get it to work you have to have a parameter in your model (ideally called `log_lik`) which calculates the log-likelihood. (annoyingly JAGS does this automatically but not Stan)
 
