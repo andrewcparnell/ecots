@@ -28,8 +28,8 @@ lapply(pkgs, library, character.only = TRUE)
 
 ## Discrete time vs continuous time
 
-- Almost all of the models we have studied so far assume that time is discrete, e.g. $t=1, 2, 3, \ldots$, or year = $1850, 1851, \ldots$. 
-- Many real world time series do not work on discrete times scales. Instead the time value $t$ might be any integer or non-integer value.
+- Almost all of the models we have studied so far assume that time is discrete, e.g. $t=1, 2, 3, \ldots$, or year = $1850, 1851, \ldots$ 
+- Many real world time series do not work on discrete times scales. Instead the time value $t$ might be any integer or non-integer value
 
 - Continuous time series might occur because:
   
@@ -201,21 +201,21 @@ hist(real_data_run$BUGSoutput$sims.list$sigma, breaks=30)
 ## Ito vs Euler-Marayuma forms
 
 - You will often see, e.g. the BM model written as:
-$$dy = \alpha dt + \sigma dW(t)$$
+$$dy = \alpha dt + \sigma dWt$$
 - This is sometimes called _Ito_ form and is a stochastic differential equation with $W$ a standard BM (i.e. with unit variance 1 and no drift)
 - An alternative is to discretise the equation in _Euler-Marayama_ form:
 $$y(t) - y(t-s) = \alpha s + \sigma ( W(t) - W(t-s) )$$
 - Writing it in this form makes it easier to see the likelihood version we used:
 $$y(t) - y(t - s) \sim N(\alpha s, s \sigma^2)$$
 - The Ito format for the OU process is:
-$$dy = \theta ( \alpha - y ) dt + \sigma dW(t)$$
+$$dy = \theta ( \alpha - y ) dt + \sigma dWt$$
 
 ## More complex stochastic equations
 
 - Lots of the harder population dynamic and diffusion models used in ecology can be written in Ito format, discretised using Euler-Marayuma, and then fitted in JAGS or similar
 - For example the Lotka-Volterra (predator-prey) model with diffusion (from Arato 2003):
-$$dN_1(t) = (b_1 - a_1 N_2(t))N_1(t) dt + \sigma_1 dW(t)$$
-$$dN_2(t) = (b_2 - a_2 N_1(t))N_2(t) dt + \sigma_2 dW(t)$$
+$$dN_1(t) = (b_1 - a_1 N_2(t))N_1(t) dt + \sigma_1 dWt$$
+$$dN_2(t) = (b_2 - a_2 N_1(t))N_2(t) dt + \sigma_2 dWt$$
 where $N_1$ is the number of prey, $N_2$ is the number of predators, and $a, b, \sigma$ are all parameters
 - Stan has some special modules that allow specific differential equations (even non-stochastic ones) to be included in the model
 
@@ -224,7 +224,7 @@ where $N_1$ is the number of prey, $N_2$ is the number of predators, and $a, b, 
 - Another way of extending these models is to give the standard deviation of the Brownian Motion its own stochastic process, just like the SVMs we met yesterday
 
 - For example:
-$$dy = \alpha dt + \sigma(dt) dW(t)$$
+$$dy = \alpha dt + \sigma(dt) dWt$$
 
 - You need to be careful about the choice of stochastic process on $\sigma$
 
