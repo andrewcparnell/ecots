@@ -439,9 +439,7 @@ lines(ice2$Age[-1],sigma_high,lty='dotted')
 # 3) (harder) The above model is only an ARCH(1) model.
 # See if you can simulate from and then fit an ARCH(2) version.
 
---------------------------------------------------------------------------------------
-  
-  #####################################################################
+#####################################################################
 #####################################################################
 # Stan resources:
 # An overview: http://mlss2014.hiit.fi/mlss_files/2-stan.pdf
@@ -461,6 +459,7 @@ lines(ice2$Age[-1],sigma_high,lty='dotted')
 # ARIMA (AutoRegressive Integrated Moving Average) fit in Stan
 
 # Some code to clear the workspace and load in required packages
+
 rm(list=ls()) # Clear the workspace
 library(rstan)
 
@@ -536,7 +535,8 @@ alpha ~ normal(0, 10); // priors
 phi ~ normal(0, 10);
 theta ~ normal(0, 10);
 sigma ~ cauchy(0, 5); // Happier with this than the uniform
-err ~ normal(0, sigma); // likelihood
+//err ~ normal(0, sigma); // likelihood
+y ~ normal(nu, sigma); // likelihood
 }
 '
 
